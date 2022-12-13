@@ -74,7 +74,7 @@ def load_gcode(dateiname):
 
     return result[0]
 
-
+print(load_gcode("test"))
 
 def storage_progress(von, bis):
 
@@ -84,7 +84,7 @@ def storage_progress(von, bis):
     times = []
     storage = []
 
-    sql = "SELECT time, free FROM stats WHERE time < '" + str(bis) + "' AND time > '" + str(von) + "' ORDER BY time ASC;"
+    sql = "SELECT time, free FROM stats WHERE time < '" + str(bis) + "' AND time > '" + str(von) + "' ORDER BY time ASC;" #Alle zeit und speicher werte in Zeitraum von-bis
 
     cursor.execute(sql)
     result = cursor.fetchall()
@@ -93,3 +93,36 @@ def storage_progress(von, bis):
         times.append(i[0])
         storage.append(i[1])
         #print(i[0], i[1])
+
+
+def count_states(von, bis):
+
+    states = [] #Liste für alle werte
+    state_dict = {}#{"error": 0, "ready": 0, "paused": 0, "printing": 0} #Ergebnis dict
+
+
+    sql = "SELECT state FROM stats WHERE time < '" + str(bis) + "' AND time > '" + str(von) + "';" #alle states in Zeitraum von-bis
+
+    cursor.execute(sql)
+    result = cursor.fetchall()
+
+
+    for i in result: #füge Ergebnisse in eine Liste
+        states.append(i[0])
+
+
+    #states = ["error", "paused", "error", "error", "paused", "printing", "printing", "error", "error"] #test liste
+
+    for i in range(len(states)-1):
+        if states[i] != states[i+1]: #wenn unterschiedlich füge wert hinzu
+            if str(states[i]) not in state_dict:
+                state_dict[str(states[i])] = 1
+            else:
+                state_dict[str(states[i])] += 1
+
+    if str(states[-1]) not in state_dict: #um letzen wert hinzuzufügen
+        state_dict[str(states[-1])] = 1
+    else:
+        state_dict[str(states[-1])] += 1
+
+    return state_dict
