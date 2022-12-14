@@ -1,7 +1,7 @@
 """
 Diese Datei bearbeitet die Json Strings in beötigte Werte
 Autor: Jure Baloh
-Datum: 14.12.2022
+Datum: 14.12.2022 15:18
 """
 import ast
 import json
