@@ -10,14 +10,14 @@ import json
 
 class get_data:
 
-    def server_request(URL):
+    def server_request(self, URL):
 
         response = requests.get(URL, timeout = 0.5)
         if response.status_code == 200:
             return response.json()
         raise Exception
 
-    def check_json_error(data):
+    def check_json_error(self, data):
         try:
             jdata = json.loads(data)
             if "error" in jdata:

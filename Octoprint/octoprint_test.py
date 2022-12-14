@@ -1,14 +1,12 @@
 """
-Diese Datei enthält die Tests für octoprint
+Diese Datei enthält die Tests und Mocks für octoprint
 
 Autor: Nico Mischnick
 letzte Änderung: 14.12.22
 """
 import unittest
-from unittest.mock import patch, MagicMock, Mock
+from unittest.mock import patch, MagicMock
 from octoprint import get_data
-from pytest import raises
-from requests.exceptions import Timeout
 
 JSON_printer_url = ""
 JSON_printer = """{"sd":{"ready":true},"state":{"error":"","flags":{"cancelling":false,"closedOrError":false,"error":false,"finishing":false,"operational":true,"paused":true,"pausing":false,"printing":false,"ready":false,"resuming":false,"sdReady":true},"text":"Paused"},"temperature":{"W":{"actual":0.0,"offset":0,"target":null},"bed":{"actual":64.94,"offset":0,"target":65.0},"tool0":{"actual":199.67,"offset":0,"target":200.0}}}"""
@@ -25,29 +23,29 @@ class test_octopi(unittest.TestCase):
         mock_response.status_code = 200
         mock_response.json.return_value = JSON_job
         mock_requests.get.return_value = mock_response
-        self.assertEqual(get_data.server_request(JSON_job_url), JSON_job)
+        self.assertEqual(get_data.server_request(self, JSON_job_url), JSON_job)
 
     @patch('octoprint.requests')
     def test_server_request_timeout(self, mock_requests):
         mock_response.status_code = Exception
         mock_requests.get.side_effect = mock_response
         with self.assertRaises(Exception):
-            get_data.server_request(JSON_job_url)
+            get_data.server_request(self, JSON_job_url)
 
     @patch('octoprint.requests')
     def test_json_error1(self, mock_requests):
         mock_response.json = JSON_error_1
         mock_requests.get.return_value = mock_response
-        self.assertEqual(get_data.check_json_error(JSON_error_1), True)
+        self.assertEqual(get_data.check_json_error(self, JSON_error_1), True)
 
     @patch('octoprint.requests')
     def test_json_error2(self, mock_requests):
         mock_response.json = JSON_error_2
         mock_requests.get.return_value = mock_response
-        self.assertEqual(get_data.check_json_error(JSON_error_2), True)
+        self.assertEqual(get_data.check_json_error(self, JSON_error_2), True)
 
     @patch('octoprint.requests')
     def test_json_valid(self, mock_requests):
         mock_response.json = JSON_printer
         mock_requests.get.return_value = mock_response
-        self.assertEqual(get_data.check_json_error(JSON_printer), False)
+        self.assertEqual(get_data.check_json_error(self,JSON_printer), False)
