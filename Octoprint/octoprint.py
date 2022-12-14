@@ -2,7 +2,7 @@
 Diese Datei ruft die Daten des Druckers über die octoprint API ab.
 
 Autor: Nico Mischnick
-letzte Änderung: 14.12.22
+letzte Änderung: 14.12.22 11:58 Uhr
 """
 
 import json
