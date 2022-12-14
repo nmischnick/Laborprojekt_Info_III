@@ -23,7 +23,7 @@ class GetData:
         response = requests.get(url, timeout=0.5)
         if response.status_code == 200:
             return str(response.json())
-        raise Exception
+        raise TimeoutError
 
     @staticmethod
     def check_json_error(data):
@@ -39,6 +39,16 @@ class GetData:
             return True
         return False
 
+
 def get_json(url):
-    if GetData.check_json_error(GetData.server_request(url)) == True:
-        return(GetData.server_request(url))
+    """
+    Diese Funktion dient zum Abfangen von Verbindungsfehlern und falschen Strings.
+    Über diese Funktion bekommt das json_filter Programm zugriff auf die JSON-Strings von dem Server
+    """
+    try:
+        string = GetData.server_request(url)
+    except TimeoutError:
+        return "Error: Verbindungsfehler"
+    if GetData.check_json_error(string) is True:
+        return string
+    return "Error: JSON_String"

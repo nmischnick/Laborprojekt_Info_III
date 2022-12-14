@@ -6,8 +6,7 @@ letzte Änderung: 14.12.22 11:58 Uhr
 """
 import unittest
 from unittest.mock import patch, MagicMock
-from octoprint import GetData
-
+from octoprint import GetData, get_json
 
 JSON_PRINTER = """{"sd":{"ready":true},"state":{"error":"","flags":{"cancelling":false,"closedOrError":false,"error":false,"finishing":false,"operational":true,"paused":true,"pausing":false,"printing":false,"ready":false,"resuming":false,"sdReady":true},"text":"Paused"},"temperature":{"W":{"actual":0.0,"offset":0,"target":null},"bed":{"actual":64.94,"offset":0,"target":65.0},"tool0":{"actual":199.67,"offset":0,"target":200.0}}}"""
 JSON_JOB_URL = "http://141.41.42.192/api/job?apikey=A7DBE849344A42A0B22C50CA22EC6210"
@@ -39,9 +38,9 @@ class TestOctoprint(unittest.TestCase):
         Diese Funktion testet die Funktion "server_request"
         auf eine fehlerhafte Verbindung
         """
-        mock_response.status_code = Exception
+        mock_response.status_code = TimeoutError
         mock_requests.get.side_effect = mock_response
-        with self.assertRaises(Exception):
+        with self.assertRaises(TimeoutError):
             GetData.server_request(JSON_JOB_URL)
 
     @patch('octoprint.requests')
@@ -68,8 +67,9 @@ class TestOctoprint(unittest.TestCase):
     def test_json_valid(self, mock_requests):
         """
         Diese Funktion testet die Funktion "check_json_error"
-        auf einen ferhlerfreien JSON-String
+        auf einen fehlerfreien JSON-String
         """
         mock_response.json = JSON_PRINTER
         mock_requests.get.return_value = mock_response
         self.assertEqual(GetData.check_json_error(JSON_PRINTER), False)
+

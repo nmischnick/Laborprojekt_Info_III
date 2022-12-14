@@ -1,13 +1,13 @@
 # This workflow will install Python dependencies, run tests and lint with a variety of Python versions
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
 
-name: mischnick_octoprint_workflow
+name: Octoprint
 
 on:
   push:
-    branches: [ "Octoprint_Nico" ]
+    branches: [ "Octoprint" ]
   pull_request:
-    branches: [ "Octoprint_Nico" ]
+    branches: [ "Octoprint" ]
 
 jobs:
   build:
