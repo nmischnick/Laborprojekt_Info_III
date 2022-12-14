@@ -3,10 +3,10 @@ Diese Datei bearbeitet die Json Strings in beötigte Werte
 Autor: Jure Baloh
 Datum: 14.12.2022
 """
-
+import ast
 import json
 import octoprint
-import ast
+
 
 PRINTER_URL = "http://141.41.42.192/api/printer?apikey=A7DBE849344A42A0B22C50CA22EC6210"
 JOB_URL = "http://141.41.42.192/api/job?apikey=A7DBE849344A42A0B22C50CA22EC6210"
@@ -52,17 +52,30 @@ def files_api_f(json_str):
     json_info = json.loads(json_str)    #json wird gelesen
     files = json_info['files']          #json baum wird definiert
     i = 0
-    for key,_ in json_info.items():    #keys namens files in dict werden geuählt
-        if key == "files":
-            i = i+1
+    liste =[]
+    while "date" in files[i]:
+        i = i+1
     for zaehler in range(0,i):
-        file = files[zaehler]                     #der n baum files wird ausgewählt
-        display = file['display']           #daten werden definiert mit path
-        hash_data = file['hash']
-        download = file['refs']['download']
-        free = json_info['free']
+        file = files[i]                     #der n baum files wird ausgewählt
+        try:
+            display = file['display']           #daten werden definiert mit path
+        except:
+            display = None
+        try:
+            hash_data = file['hash']
+        except:
+            hash_data = None
+        try:
+            download = file['refs']['download']
+        except:
+            download = None
+        try:
+            free = json_info['free']
+        except:
+            free= None
         files_api_data = {'hash':hash_data, 'display':display,'download':download,'free':free} #daten in eigene dict
-        return files_api_data
+        liste.append(files_api_data)
+    return liste
 
 printer_api = octoprint.get_json(PRINTER_URL)
 printer_api = ast.literal_eval(printer_api)
