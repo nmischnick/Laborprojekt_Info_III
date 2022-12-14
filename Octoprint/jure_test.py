@@ -1,3 +1,7 @@
+"""Diese Datei enthält die Tests um  die Json Strings in beötigte Werte zu bearbeiten
+Autor: Jure Baloh
+Datum: 14.12.2022"""
+
 from unittest.mock import MagicMock
 import json
 from Ocoprint_Jure import printer_api_f

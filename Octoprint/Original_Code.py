@@ -1,3 +1,7 @@
+"""Diese Datei bearbeitet die Json Strings in beötigte Werte
+Autor: Jure Baloh
+Datum: 14.12.2022"""
+
 import json
 
 printer_api ='{"sd":{"ready":true},"state":{"error":"","flags":{"cancelling":false,"closedOrError":false,"error":false,"finishing":false,"operational":true,"paused":true,"pausing":false,"printing":false,"ready":false,"resuming":false,"sdReady":true},"text":"Paused"},"temperature":{"W":{"actual":0.0,"offset":0,"target":null},"bed":{"actual":64.94,"offset":0,"target":65.0},"tool0":{"actual":199.67,"offset":0,"target":200.0}}}'
