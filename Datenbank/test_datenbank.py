@@ -50,11 +50,6 @@ def sample_data_files():
 
     return files
 
-@pytest.fixture()
-def mock_octoprint():
-    pass
-
-
 
 def test_can_insert_data():
     octoprint = MagicMock()
@@ -65,4 +60,5 @@ def test_can_insert_data():
     files = octoprint.get_files_data()
     jobs = octoprint.get_jobs_data()
     to_database_all(printer, files, jobs)
-    to_database_all.assert_called()
+
+    assert True

@@ -1,5 +1,4 @@
 import pymysql   #für die Verbindung zur MySQL-Datenbank
-from test_datenbank import sample_data_printer, sample_data_files, sample_data_job
 from datetime import datetime
 import requests
 
@@ -38,7 +37,7 @@ def to_database_stats(printer, files):
     temp_tool_s = str(printer["temp_tool_s"])
     temp_bed_i = str(printer["temp_bed_i"])
     temp_bed_s = str(printer["temp_bed_s"])
-    free = str(files["free"])
+    free = str(files[0]["free"])
 
     sql = "INSERT INTO `stats` (`stat_id`, `time`, `state`, `temp_tool_i`, `temp_tool_s`, `temp_bed_i`, `temp_bed_s`, `free`) " \
           "VALUES (NULL, '"+dt+"', '"+state+"', '"+temp_tool_i+"', '"+temp_tool_s+"', '"+temp_bed_i+"', '"+temp_bed_s+"', '"+free+"');"
@@ -97,7 +96,7 @@ def load_gcode(dateiname):
 
     #return result[0]
 
-load_gcode("testfile")
+#load_gcode("testfile")
 
 def storage_progress(von, bis):
     '''
