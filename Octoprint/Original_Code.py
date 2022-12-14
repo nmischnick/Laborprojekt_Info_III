@@ -1,6 +1,6 @@
 """Diese Datei bearbeitet die Json Strings in beötigte Werte
 Autor: Jure Baloh
-Datum: 14.12.2022"""
+Datum: 14.12.2022 10:34"""
 
 import json
 

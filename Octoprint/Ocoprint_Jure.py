@@ -1,6 +1,6 @@
 """Diese Datei enthält die Mocks für die Test um  die Json Strings in beötigte Werte zu Bearbeiten
 Autor: Jure Baloh
-Datum: 14.12.2022"""
+Datum: 14.12.2022 10:34"""
 
 import json
 

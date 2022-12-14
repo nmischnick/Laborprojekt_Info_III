@@ -1,6 +1,6 @@
 """Diese Datei enthält die Tests um  die Json Strings in beötigte Werte zu bearbeiten
 Autor: Jure Baloh
-Datum: 14.12.2022"""
+Datum: 14.12.2022 10:34"""
 
 from unittest.mock import MagicMock
 import json
