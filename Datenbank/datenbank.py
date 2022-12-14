@@ -29,10 +29,6 @@ def create_database():
 
 create_database()
 
-printer = sample_data_printer()
-files = sample_data_files()
-jobs = sample_data_job()
-
 
 #stats TABLE
 def to_database_stats(printer, files):
