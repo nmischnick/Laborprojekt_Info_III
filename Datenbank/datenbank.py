@@ -1,6 +1,7 @@
 import pymysql   #für die Verbindung zur MySQL-Datenbank
 from test_datenbank import sample_data_printer, sample_data_files, sample_data_job
 from datetime import datetime
+import requests
 
 #Verbindung zur Datenbank herstellen
 connection = pymysql.connect(host='127.0.0.1',
@@ -12,9 +13,21 @@ connection = pymysql.connect(host='127.0.0.1',
 #Cursor zur Abfrage von Daten
 cursor = connection.cursor()
 
-# Datenbank auswählen
-sql="use drucker_prozessdaten"
-cursor.execute(sql)
+def create_database():
+    cursor.execute("CREATE DATABASE IF NOT EXISTS drucker_prozessdaten")  # Entweder Statement direkt einfügen
+    cursor.execute("use drucker_prozessdaten")
+    #create stats table
+    sql = "CREATE TABLE IF NOT EXISTS `stats` (`stat_id` INT NOT NULL AUTO_INCREMENT , `time` DATETIME NOT NULL , `state` VARCHAR(20) NOT NULL , `temp_tool_i` FLOAT(30) NOT NULL , `temp_tool_s` FLOAT(30) NOT NULL , `temp_bed_i` FLOAT(30) NOT NULL , `temp_bed_s` FLOAT(30) NOT NULL , `free` BIGINT(30) NOT NULL , PRIMARY KEY (`stat_id`)) ENGINE = InnoDB;"
+    cursor.execute(sql)
+    #create files table
+    sql = "CREATE TABLE IF NOT EXISTS `files` (`file_id` VARCHAR(100) NOT NULL , `display` VARCHAR(100) NOT NULL , `download` VARCHAR(100) NOT NULL , PRIMARY KEY (`file_id`)) ENGINE = InnoDB;"
+    cursor.execute(sql)
+    #create jobs table
+    sql = "CREATE TABLE IF NOT EXISTS `jobs` (`job_id` INT NOT NULL AUTO_INCREMENT , `display` VARCHAR(30) NOT NULL , `averagePrintTime` FLOAT(30) NOT NULL , `volume` FLOAT(30) NOT NULL , PRIMARY KEY (`job_id`)) ENGINE = InnoDB;"
+    cursor.execute(sql)
+
+create_database()
+
 
 dt = str(datetime.now())
 
@@ -72,11 +85,15 @@ def load_gcode(dateiname):
     cursor.execute(sql)
     result = cursor.fetchone()
 
-    return result[0]
+    r = requests.get(result[0], allow_redirects=True)
 
-print(load_gcode("test"))
+    open(dateiname, 'wb').write(r.content)
 
-def storage_progress(von, bis):
+    #return result[0]
+
+load_gcode("testfile")
+
+def storage_progress(von, bis): #gibt 2 Listen zurück. 1. zeitpunkte 2. freier Speicher zu Zeitpunkt
 
     #bis = datetime.now()
     #von = datetime(2020, 1, 1)
@@ -94,8 +111,10 @@ def storage_progress(von, bis):
         storage.append(i[1])
         #print(i[0], i[1])
 
+    return times, storage
 
-def count_states(von, bis):
+
+def count_states(von, bis): #zählt die stati in denen der Druck im zeitraum von-bis war
 
     states = [] #Liste für alle werte
     state_dict = {}#{"error": 0, "ready": 0, "paused": 0, "printing": 0} #Ergebnis dict
