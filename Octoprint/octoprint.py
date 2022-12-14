@@ -5,19 +5,32 @@ Autor: Nico Mischnick
 letzte Änderung: 14.12.22
 """
 
-import requests
 import json
+import requests
 
-class get_data:
 
-    def server_request(self, URL):
+class GetData:
+    """
+    Diese Klasse enthält Funktionen, um die Verbindung zum Server zu testen
+    und einen gültigen JSON-String zu erhalten.
+    """
 
-        response = requests.get(URL, timeout = 0.5)
+    @staticmethod
+    def server_request(url):
+        """
+        Diese Funktion testet die Verbindung zum Server.
+        """
+        response = requests.get(url, timeout=0.5)
         if response.status_code == 200:
             return response.json()
         raise Exception
 
-    def check_json_error(self, data):
+    @staticmethod
+    def check_json_error(data):
+        """
+        Diese Funktion überprüft den Input, ob es ein JSON-String ist
+        und ob der JSON-String einen Error enthält
+        """
         try:
             jdata = json.loads(data)
             if "error" in jdata:
