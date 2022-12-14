@@ -6,53 +6,51 @@ files_api = '{"files":[{"date":1655993823,"display":"Form-Kubus_0.2mm_PETG_MK3S_
 
 
 def printer_api_f(json_str):
-    y = json.loads(json_str)
-    state = y["state"]
-    flags = state['flags']
+    json_info = json.loads(json_str)            #json wird gelesen
+    state = json_info["state"]                  # json baum wird definiert
+    flags = state['flags']                      #json unterbaum wird definiert
     state = {}
     for key, value in dict(flags).items():
-        if value == False:
+        if value == False:                      # wenn key = false wird entfernt
             del flags[key]
-        else:
+        else:                                   #wenn key "! false wird er in die dict hinzugefügt
             name = key
             value = flags[key]
             state[name] = value
 
-    temperatur = y['temperature']
+    temperatur = json_info['temperature']       #daten definieren mit path
     temp_bed_i = temperatur['bed']['actual']
     temp_bed_s = temperatur['bed']['target']
     temp_tool_i = temperatur['tool0']['actual']
     temp_tool_s = temperatur['tool0']['target']
-    printer_api_data = {"state":state,"temp_tool_i":temp_tool_i,"temp_tool_s":temp_tool_s,"temp_bed_i":temp_bed_i,"temp_bed_s":temp_bed_s}
+    printer_api_data = {"state":state,"temp_tool_i":temp_tool_i,"temp_tool_s":temp_tool_s,"temp_bed_i":temp_bed_i,"temp_bed_s":temp_bed_s} #daten in eigene Dict
     return printer_api_data
 
 def job_api_f(json_str):
-    y = json.loads(json_str)
-    averagePrintTime =y["job"]['averagePrintTime']
-    volume = y['job']['filament']['tool0']['volume']
-    display = y['job']['file']['display']
-    job_api_data = {'averagePrintTime':averagePrintTime,"volume":volume,"display":display}
+    json_info = json.loads(json_str)                            #json wird gelesen
+    averagePrintTime =json_info["job"]['averagePrintTime']      #daten definieren mit path
+    volume = json_info['job']['filament']['tool0']['volume']
+    display = json_info['job']['file']['display']
+    job_api_data = {'averagePrintTime':averagePrintTime,"volume":volume,"display":display}  #daten in eigene Dict
     return job_api_data
 
 def files_api_f(json_str):
-    y = json.loads(json_str)
-    files = y['files']
-    filesdict = []
+    json_info = json.loads(json_str)    #json wird gelesen
+    files = json_info['files']          #json baum wird definiert
     i = 0
-    for key,value in y.items():
+    for key,_ in json_info.items():    #keys namens files in dict werden geuählt
         if key == "files":
             i = i+1
     for n in range(0,i):
-        file = files[n]
-        display = file['display']
+        file = files[n]                     #der n baum files wird ausgewählt
+        display = file['display']           #daten werden definiert mit path
         hash = file['hash']
         download = file['refs']['download']
-        free = y['free']
-        files_api_data = {'hash':hash, 'display':display,'download':download,'free':free}
-        filesdict.append("filedict"+str(n))
-        filesdict[n] = files_api_data
-        return filesdict[n]
+        free = json_info['free']
+        files_api_data = {'hash':hash, 'display':display,'download':download,'free':free} #daten in eigene dict
+        return files_api_data
 
 werte_printer_api = printer_api_f(printer_api)
 werte_job_api = job_api_f(job_api)
 werte_files_api = files_api_f(files_api)
+print(werte_files_api)

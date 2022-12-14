@@ -17,10 +17,8 @@ def test_can_call_printer_api():
     "temperature":
         {"W":{"actual":0.0,"offset":0,"target":null},
             "bed":{"actual":64.94,"offset":0,"target":65.0},
-            "tool0":{"actual":199.67,"offset":0,"target":200.0}}}
-    
+            "tool0":{"actual":199.67,"offset":0,"target":200.0}}}    
     """
-
     octoprint_rest.get_job_info(octoprint_rest)
     octoprint_rest.get_job_info.assert_called()
 
@@ -37,8 +35,8 @@ def test_get_job_info_gets_json_printer_api():
     "temperature":
         {"W":{"actual":0.0,"offset":0,"target":null},
             "bed":{"actual":64.94,"offset":0,"target":65.0},
-            "tool0":{"actual":199.67,"offset":0,"target":200.0}}}"""
-
+            "tool0":{"actual":199.67,"offset":0,"target":200.0}}}
+    """
     assert json.loads(octoprint_rest.get_job_info())
 
 def test_printer_api_f_returns_values_printer_api():
@@ -71,10 +69,7 @@ def test_can_call_job_api():
         "lastPrintTime":5049.7762020089995,"user":"Triltsch"},
     "progress":{"completion":0.2779260644952104,"filepos":5503,"printTime":109,"printTimeLeft":4943,"printTimeLeftOrigin":"average"},"state":"Paused"
     }
-
-
     """
-
     octoprint_rest.get_job_info(octoprint_rest)
     octoprint_rest.get_job_info.assert_called()
 
@@ -106,11 +101,10 @@ def test_job_api_f_returns_values_job_api():
     "progress":{"completion":0.2779260644952104,"filepos":5503,"printTime":109,"printTimeLeft":4943,"printTimeLeftOrigin":"average"},"state":"Paused"
     }   
     """
-    averagePrintTime,volume,display = job_api_f(octoprint_rest)
-    assert averagePrintTime == 4988.674538585007  and volume == 7.194864641049301 and display == "Handyhalter_TQM_1.gcode"
+    average_print_time,volume,display = job_api_f(octoprint_rest)
+    assert average_print_time == 4988.674538585007  and volume == 7.194864641049301 and display == "Handyhalter_TQM_1.gcode"
 
-
-def test_can_call_file_api():
+def test_can_call_files_api():
     octoprint_rest = MagicMock()
     octoprint_rest.get_job_info.return_value = """{
     "files":
@@ -135,7 +129,7 @@ def test_can_call_file_api():
     octoprint_rest.get_job_info(octoprint_rest)
     octoprint_rest.get_job_info.assert_called()
 
-def test_get_job_info_gets_json_file_api():
+def test_get_job_info_gets_json_files_api():
     octoprint_rest = MagicMock()
     octoprint_rest.get_job_info.return_value = """{
     "files":
@@ -157,7 +151,7 @@ def test_get_job_info_gets_json_file_api():
 
     assert json.loads(octoprint_rest.get_job_info())
 
-def test_file_api_f_returns_values_file_api():
+def test_files_api_f_returns_values_files_api():
     octoprint_rest = MagicMock()
     octoprint_rest.get_job_info.return_value ="""{
     "files":
