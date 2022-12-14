@@ -12,7 +12,7 @@ FILES_API = '{"files":[{"date":1655993823,"display":"Form-Kubus_0.2mm_PETG_MK3S_
 
 
 def printer_api_f(json_str):
-    "Die Funktion bearbeitet den Json_printer_api_string. Dabei werden die False Werte rausgelöscht."
+    """Die Funktion bearbeitet den Json_printer_api_string. Dabei werden die False Werte rausgelöscht."""
     json_info = json.loads(json_str)            #json wird gelesen
     state = json_info["state"]                  # json baum wird definiert
     flags = state['flags']                      #json unterbaum wird definiert
@@ -34,7 +34,7 @@ def printer_api_f(json_str):
     return printer_api_data
 
 def job_api_f(json_str):
-    "Die Funktion bearveitet den Json_job_api_string. Die wichtigen Werte werden im neuen Dict gespeichert."
+    """Die Funktion bearveitet den Json_job_api_string. Die wichtigen Werte werden im neuen Dict gespeichert."""
     json_info = json.loads(json_str)                            #json wird gelesen
     average_print_time =json_info["job"]['averagePrintTime']      #daten definieren mit path
     volume = json_info['job']['filament']['tool0']['volume']
@@ -43,7 +43,7 @@ def job_api_f(json_str):
     return job_api_data
 
 def files_api_f(json_str):
-    "Die Funktion bearveitet den Json_files_api_string. Da der String aus mehreren Bäumen besteht, werden die nacheinander bearbeitet."
+    """Die Funktion bearveitet den Json_files_api_string. Da der String aus mehreren Bäumen besteht, werden die nacheinander bearbeitet."""
     json_info = json.loads(json_str)    #json wird gelesen
     files = json_info['files']          #json baum wird definiert
     i = 0

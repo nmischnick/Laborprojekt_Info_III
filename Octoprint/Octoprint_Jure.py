@@ -7,7 +7,7 @@ Datum: 14.12.2022 10:34
 import json
 
 def printer_api_f(octoprint_rest):
-    "Die Mock-Funktion bearbeitet den Json_printer_api_string. Dabei werden die False Werte rausgelöscht."
+    """Die Mock-Funktion bearbeitet den Json_printer_api_string. Dabei werden die False Werte rausgelöscht."""
     job_info = octoprint_rest.get_job_info()
     json_info = json.loads(job_info)
     state = json_info["state"]
@@ -29,7 +29,7 @@ def printer_api_f(octoprint_rest):
     return state,temp_tool_i,temp_tool_s,temp_bed_i,temp_bed_s
 
 def job_api_f(octoprint_rest):
-    "Die Funktion bearbeitet den Json_job_api_string."
+    """Die Funktion bearbeitet den Json_job_api_string."""
     job_info = octoprint_rest.get_job_info()
     json_info = json.loads(job_info)
     average_print_time =json_info["job"]['averagePrintTime']
@@ -38,7 +38,7 @@ def job_api_f(octoprint_rest):
     return average_print_time,volume,display
 
 def files_api_f(octoprint_rest):
-    "Die Funktion bearveitet den Json_files_api_string. Da der String aus mehreren Bäumen besteht, werden die nacheinander bearbeitet."
+    """Die Funktion bearveitet den Json_files_api_string. Da der String aus mehreren Bäumen besteht, werden die nacheinander bearbeitet."""
     job_info = octoprint_rest.get_job_info()
     json_info = json.loads(job_info)
     files = json_info['files']
