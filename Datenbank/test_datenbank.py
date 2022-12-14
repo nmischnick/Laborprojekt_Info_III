@@ -1,6 +1,8 @@
 from unittest.mock import MagicMock
-
 import pytest
+
+from datenbank import to_database_all
+
 """
 def get_random_string(length):
     # choose from all lowercase letter
@@ -54,8 +56,13 @@ def mock_octoprint():
 
 
 
-def test_can_call_get_data():
+def test_can_insert_data():
     octoprint = MagicMock()
-    octoprint.get_data.return_value = sample_data_printer()
-    octoprint.get_data()
-    octoprint.get_data.assert_called()
+    octoprint.get_printer_data.return_value = sample_data_printer()
+    octoprint.get_files_data.return_value = sample_data_files()
+    octoprint.get_jobs_data.return_value = sample_data_job()
+    printer = octoprint.get_printer_data()
+    files = octoprint.get_files_data()
+    jobs = octoprint.get_jobs_data()
+    to_database_all(printer, files, jobs)
+    to_database_all.assert_called()

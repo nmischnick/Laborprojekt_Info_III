@@ -14,6 +14,7 @@ connection = pymysql.connect(host='127.0.0.1',
 cursor = connection.cursor()
 
 def create_database():
+    #create database
     cursor.execute("CREATE DATABASE IF NOT EXISTS drucker_prozessdaten")  # Entweder Statement direkt einfügen
     cursor.execute("use drucker_prozessdaten")
     #create stats table
@@ -28,16 +29,14 @@ def create_database():
 
 create_database()
 
-
-dt = str(datetime.now())
-
 printer = sample_data_printer()
 files = sample_data_files()
 jobs = sample_data_job()
 
 
 #stats TABLE
-def to_database_stats():
+def to_database_stats(printer, files):
+    dt = str(datetime.now())
     state = str(printer["state"])
     temp_tool_i = str(printer["temp_tool_i"])
     temp_tool_s = str(printer["temp_tool_s"])
@@ -53,7 +52,7 @@ def to_database_stats():
 
 
 #files TABLE
-def to_database_files():
+def to_database_files(files):
     for file in files:
         file_id = str(file["hash"])
         display = str(file["display"])
@@ -65,7 +64,7 @@ def to_database_files():
         connection.commit()
 
 #jobs TABLE
-def to_database_jobs():
+def to_database_jobs(jobs):
     display = str(jobs["display"])
     averagePrintTime = str(jobs["averagePrintTime"])
     volume = str(jobs["volume"])
@@ -76,7 +75,12 @@ def to_database_jobs():
     connection.commit()
 
 
-to_database_files()
+
+def to_database_all(printer, files, jobs):
+
+    to_database_jobs(jobs)
+    to_database_stats(printer, files)
+    to_database_files(files)
 
 def load_gcode(dateiname):
     '''
