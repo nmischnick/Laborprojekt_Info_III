@@ -1,6 +1,8 @@
-"""Diese Datei enthält die Tests um  die Json Strings in beötigte Werte zu bearbeiten
+"""
+Diese Datei enthält die Tests um  die Json Strings in beötigte Werte zu bearbeiten
 Autor: Jure Baloh
-Datum: 14.12.2022 10:34"""
+Datum: 14.12.2022
+"""
 
 from unittest.mock import MagicMock
 import json
@@ -9,6 +11,7 @@ from Ocoprint_Jure import job_api_f
 from Ocoprint_Jure import files_api_f
 
 def test_can_call_printer_api():
+    """Die Funktion testet, ob die printer_api Json-String aufgerugen werden kann"""
     octoprint_rest = MagicMock()
     octoprint_rest.get_job_info.return_value = """{
     "sd":
@@ -27,6 +30,7 @@ def test_can_call_printer_api():
     octoprint_rest.get_job_info.assert_called()
 
 def test_get_job_info_gets_json_printer_api():
+    """Die Funktion testet ob der json_pritnter_api String gelesen werden kann"""
     octoprint_rest = MagicMock()
     octoprint_rest.get_job_info.return_value = """{
     "sd":
@@ -44,6 +48,7 @@ def test_get_job_info_gets_json_printer_api():
     assert json.loads(octoprint_rest.get_job_info())
 
 def test_printer_api_f_returns_values_printer_api():
+    """Die Funktion testet ob der json_pritnter_api String richtig interpretiert wird"""
     octoprint_rest = MagicMock()
     octoprint_rest.get_job_info.return_value ="""{
     "sd":
@@ -62,6 +67,7 @@ def test_printer_api_f_returns_values_printer_api():
     assert state != "" and temp_tool_i == 199.67 and temp_tool_s == 200 and temp_bed_i == 64.94 and temp_bed_s == 65
 
 def test_can_call_job_api():
+    """Die Funktion testet, ob die job_api Json-String aufgerugen werden kann"""
     octoprint_rest = MagicMock()
     octoprint_rest.get_job_info.return_value = """{
     "job":
@@ -78,6 +84,7 @@ def test_can_call_job_api():
     octoprint_rest.get_job_info.assert_called()
 
 def test_get_job_info_gets_json_job_api():
+    """Die Funktion testet ob der json_job_api String gelesen werden kann"""
     octoprint_rest = MagicMock()
     octoprint_rest.get_job_info.return_value = """{
     "job":
@@ -93,6 +100,7 @@ def test_get_job_info_gets_json_job_api():
     assert json.loads(octoprint_rest.get_job_info())
 
 def test_job_api_f_returns_values_job_api():
+    """Die Funktion testet ob der json_job_api String richtig interpretiert wird"""
     octoprint_rest = MagicMock()
     octoprint_rest.get_job_info.return_value ="""{
     "job":
@@ -109,6 +117,7 @@ def test_job_api_f_returns_values_job_api():
     assert average_print_time == 4988.674538585007  and volume == 7.194864641049301 and display == "Handyhalter_TQM_1.gcode"
 
 def test_can_call_files_api():
+    """Die Funktion testet, ob die files_api Json-String aufgerugen werden kann"""
     octoprint_rest = MagicMock()
     octoprint_rest.get_job_info.return_value = """{
     "files":
@@ -134,6 +143,7 @@ def test_can_call_files_api():
     octoprint_rest.get_job_info.assert_called()
 
 def test_get_job_info_gets_json_files_api():
+    """Funkton testen ob die files_api gelesen werden kann"""
     octoprint_rest = MagicMock()
     octoprint_rest.get_job_info.return_value = """{
     "files":
@@ -156,6 +166,7 @@ def test_get_job_info_gets_json_files_api():
     assert json.loads(octoprint_rest.get_job_info())
 
 def test_files_api_f_returns_values_files_api():
+    """Die Funktion testet ob der json_files_api String richtig interpretiert wird"""
     octoprint_rest = MagicMock()
     octoprint_rest.get_job_info.return_value ="""{
     "files":
@@ -174,5 +185,5 @@ def test_files_api_f_returns_values_files_api():
         "statistics":{"averagePrintTime":{},"lastPrintTime":{}}
         ,"type":"machinecode","typePath":["machinecode","gcode"]} ],
     "free":27833102336,"total":31119536128}"""
-    free,display,hash,download = files_api_f(octoprint_rest)
-    assert free == 27833102336 and display == "Form-Kubus_0.2mm_PETG_MK3S_25m.gcode" and hash == "732bc17d3771299b1c86272d75e6fb1522f3bcd5" and download == "http://141.41.42.192/downloads/files/local/Form-Kubus_0.2mm_PETG_MK3S_25m.gcode"
+    free,display,hash_data,download = files_api_f(octoprint_rest)
+    assert free == 27833102336 and display == "Form-Kubus_0.2mm_PETG_MK3S_25m.gcode" and hash_data == "732bc17d3771299b1c86272d75e6fb1522f3bcd5" and download == "http://141.41.42.192/downloads/files/local/Form-Kubus_0.2mm_PETG_MK3S_25m.gcode"

@@ -1,10 +1,13 @@
-"""Diese Datei enthält die Mocks für die Test um  die Json Strings in beötigte Werte zu Bearbeiten
+"""
+Diese Datei enthält die Mocks für die Test um  die Json Strings in beötigte Werte zu Bearbeiten
 Autor: Jure Baloh
-Datum: 14.12.2022 10:34"""
+Datum: 14.12.2022 10:34
+"""
 
 import json
 
 def printer_api_f(octoprint_rest):
+    "Die Mock-Funktion bearbeitet den Json_printer_api_string. Dabei werden die False Werte rausgelöscht."
     job_info = octoprint_rest.get_job_info()
     json_info = json.loads(job_info)
     state = json_info["state"]
@@ -23,19 +26,19 @@ def printer_api_f(octoprint_rest):
     temp_bed_s = temperatur['bed']['target']
     temp_tool_i = temperatur['tool0']['actual']
     temp_tool_s = temperatur['tool0']['target']
-    printer_api_data = {"state":state,"temp_tool_i":temp_tool_i,"temp_tool_s":temp_tool_s,"temp_bed_i":temp_bed_i,"temp_bed_s":temp_bed_s}
     return state,temp_tool_i,temp_tool_s,temp_bed_i,temp_bed_s
 
 def job_api_f(octoprint_rest):
+    "Die Funktion bearbeitet den Json_job_api_string."
     job_info = octoprint_rest.get_job_info()
     json_info = json.loads(job_info)
-    averagePrintTime =json_info["job"]['averagePrintTime']
+    average_print_time =json_info["job"]['averagePrintTime']
     volume = json_info['job']['filament']['tool0']['volume']
     display = json_info['job']['file']['display']
-    job_api_data = {'averagePrintTime':averagePrintTime,"volume":volume,"display":display}
-    return averagePrintTime,volume,display
+    return average_print_time,volume,display
 
 def files_api_f(octoprint_rest):
+    "Die Funktion bearveitet den Json_files_api_string. Da der String aus mehreren Bäumen besteht, werden die nacheinander bearbeitet."
     job_info = octoprint_rest.get_job_info()
     json_info = json.loads(job_info)
     files = json_info['files']
@@ -43,12 +46,11 @@ def files_api_f(octoprint_rest):
     for key,_ in json_info.items():
         if key == "files":
             i = i+1
-    for n in range(0,i):
-        file = files[n]
+    for zaehler in range(0,i):
+        file = files[zaehler]
 
         free = json_info['free']
         display = file['display']
-        hash = file['hash']
+        hash_data = file['hash']
         download = file['refs']['download']
-        files_api_data = {'hash':hash, 'display':display,'download':download,'free':free}
-        return free, display, hash, download
+        return free, display, hash_data, download
