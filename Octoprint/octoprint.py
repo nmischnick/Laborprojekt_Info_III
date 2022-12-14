@@ -22,7 +22,7 @@ class GetData:
         """
         response = requests.get(url, timeout=0.5)
         if response.status_code == 200:
-            return response.json()
+            return str(response.json())
         raise Exception
 
     @staticmethod
@@ -32,9 +32,13 @@ class GetData:
         und ob der JSON-String einen Error enthält
         """
         try:
-            jdata = json.loads(data)
+            jdata = json.loads(str(data))
             if "error" in jdata:
                 return True
         except ValueError:
             return True
         return False
+
+def get_json(url):
+    if GetData.check_json_error(GetData.server_request(url)) == True:
+        return(GetData.server_request(url))

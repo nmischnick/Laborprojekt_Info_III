@@ -5,6 +5,11 @@ Datum: 14.12.2022
 """
 
 import json
+import octoprint
+
+PRINTER_URL = "http://141.41.42.192/api/job?apikey=A7DBE849344A42A0B22C50CA22EC6210"
+JOB_URL = "http://141.41.42.192/api/job?apikey=A7DBE849344A42A0B22C50CA22EC6210"
+FILES_URL = "http://141.41.42.192/api/files?apikey=A7DBE849344A42A0B22C50CA22EC6210"
 
 PRINTER_API ='{"sd":{"ready":true},"state":{"error":"","flags":{"cancelling":false,"closedOrError":false,"error":false,"finishing":false,"operational":true,"paused":true,"pausing":false,"printing":false,"ready":false,"resuming":false,"sdReady":true},"text":"Paused"},"temperature":{"W":{"actual":0.0,"offset":0,"target":null},"bed":{"actual":64.94,"offset":0,"target":65.0},"tool0":{"actual":199.67,"offset":0,"target":200.0}}}'
 JOB_API = '{"job":{"averagePrintTime":4988.674538585007,"estimatedPrintTime":3135.1295167632998,"filament":{"tool0":{"length":2991.2771200002394,"volume":7.194864641049301}},"file":{"date":1657719794,"display":"Handyhalter_TQM_1.gcode","name":"Handyhalter_TQM_1.gcode","origin":"local","path":"Handyhalter_TQM_1.gcode","size":1980023},"lastPrintTime":5049.7762020089995,"user":"Triltsch"},"progress":{"completion":0.2779260644952104,"filepos":5503,"printTime":109,"printTimeLeft":4943,"printTimeLeftOrigin":"average"},"state":"Paused"}'
@@ -59,6 +64,9 @@ def files_api_f(json_str):
         files_api_data = {'hash':hash_data, 'display':display,'download':download,'free':free} #daten in eigene dict
         return files_api_data
 
-werte_printer_api = printer_api_f(PRINTER_API)
-werte_job_api = job_api_f(JOB_API)
-werte_files_api = files_api_f(FILES_API)
+a = octoprint.get_json(PRINTER_URL)
+werte_printer_api = printer_api_f(a)
+#werte_job_api = job_api_f(octoprint.get_json(JOB_URL))
+#werte_files_api = files_api_f(octoprint.get_json(FILES_URL))
+
+
