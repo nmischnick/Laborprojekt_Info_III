@@ -79,6 +79,12 @@ def to_database_jobs():
 to_database_files()
 
 def load_gcode(dateiname):
+    '''
+    Lädt zu gegebenem Dateiname den GCode herunter
+
+    :param dateiname: Name der Datei zu der der GCode heruntergeladen werden soll
+    :return: None
+    '''
 
     sql = "SELECT download FROM files WHERE display ='"+dateiname+"';"
 
@@ -93,7 +99,15 @@ def load_gcode(dateiname):
 
 load_gcode("testfile")
 
-def storage_progress(von, bis): #gibt 2 Listen zurück. 1. zeitpunkte 2. freier Speicher zu Zeitpunkt
+def storage_progress(von, bis):
+    '''
+    Gibt 2 Listen (zeitpunkt, wert) zurück, um den Verlauf des freien Speicherplatzes auf dem Server zu plotten
+
+    :param von: Zeitpunkt, ab dem der Verlauf beginnen soll
+    :param bis: Zeitpunkt, an dem der Verlauf enden soll
+    :return: 2 Listen mit Zeitpunkt und Wert
+    :rtype: list
+    '''
 
     #bis = datetime.now()
     #von = datetime(2020, 1, 1)
@@ -114,7 +128,15 @@ def storage_progress(von, bis): #gibt 2 Listen zurück. 1. zeitpunkte 2. freier 
     return times, storage
 
 
-def count_states(von, bis): #zählt die stati in denen der Druck im zeitraum von-bis war
+def count_states(von, bis):
+    '''
+    Ermittelt, wie oft der Drucker im Zeitraum x in einem der Stati (Bereit, Aus, Druckt, Pausiert, Störung) war
+
+    :param von: Zeitpunkt, ab dem der Verlauf beginnen soll
+    :param bis: Zeitpunkt, an dem der Verlauf enden soll
+    :return: Dictionary mit status als key und Anzahl als value
+    :rtype: dict
+    '''
 
     states = [] #Liste für alle werte
     state_dict = {}#{"error": 0, "ready": 0, "paused": 0, "printing": 0} #Ergebnis dict
