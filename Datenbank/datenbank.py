@@ -35,7 +35,7 @@ def create_database(cursor, connection):
 #create_database()
 
 #cursor = create_connection()[0]
-cursor.execute("use drucker_prozessdaten")
+#cursor.execute("use drucker_prozessdaten")
 #connection = create_connection()[1]
 
 def get_job_id(jobs):
