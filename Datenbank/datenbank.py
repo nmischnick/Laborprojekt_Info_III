@@ -3,16 +3,16 @@ from datetime import datetime
 import requests
 
 #Verbindung zur Datenbank herstellen
-connection = pymysql.connect(host='127.0.0.1',
-                             user='root',
-                             password='',
-                             )
+def create_connection():
 
+    connection = pymysql.connect(host='127.0.0.1',
+                              user='root',
+                              password='',
+                              )
+    cursor = connection.cursor()
+    return cursor
 
-#Cursor zur Abfrage von Daten
-cursor = connection.cursor()
-
-def create_database():
+def create_database(cursor, connection):
     #create database
     cursor.execute("CREATE DATABASE IF NOT EXISTS drucker_prozessdaten")  # Entweder Statement direkt einfügen
     cursor.execute("use drucker_prozessdaten")
@@ -27,12 +27,13 @@ def create_database():
     cursor.execute(sql)
     #create files n-m jobs table
     sql = "CREATE TABLE filetojob (job_id INT NOT NULL, file_id INT NOT NULL, FOREIGN KEY (job_id) REFERENCES jobs (job_id), FOREIGN KEY (file_id) REFERENCES files (file_id));"
+    connection.commit()
 
-create_database()
+#create_database()
 
 
 #stats TABLE
-def to_database_stats(printer, files):
+def to_database_stats(cursor, connection, printer, files):
     dt = str(datetime.now())
     state = str(printer["state"])
     temp_tool_i = str(printer["temp_tool_i"])
@@ -49,7 +50,7 @@ def to_database_stats(printer, files):
 
 
 #files TABLE
-def to_database_files(files):
+def to_database_files(cursor, connection, files):
     for file in files:
         file_id = str(file["hash"])
         display = str(file["display"])
@@ -61,7 +62,7 @@ def to_database_files(files):
         connection.commit()
 
 #jobs TABLE
-def to_database_jobs(jobs):
+def to_database_jobs(cursor, connection, jobs):
     display = str(jobs["display"])
     averagePrintTime = str(jobs["averagePrintTime"])
     volume = str(jobs["volume"])
@@ -100,7 +101,7 @@ def load_gcode(dateiname):
 
 #load_gcode("testfile")
 
-def storage_progress(von, bis):
+def storage_progress(cursor, connection, von, bis):
     '''
     Gibt 2 Listen (zeitpunkt, wert) zurück, um den Verlauf des freien Speicherplatzes auf dem Server zu plotten
 
@@ -129,7 +130,7 @@ def storage_progress(von, bis):
     return times, storage
 
 
-def count_states(von, bis):
+def count_states(cursor, connection, von, bis):
     '''
     Ermittelt, wie oft der Drucker im Zeitraum x in einem der Stati (Bereit, Aus, Druckt, Pausiert, Störung) war
 
