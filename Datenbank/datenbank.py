@@ -3,14 +3,15 @@ from datetime import datetime
 import requests
 
 #Verbindung zur Datenbank herstellen
-def create_connection():
-
+try:
     connection = pymysql.connect(host='127.0.0.1',
-                              user='root',
-                              password='',
-                              )
+                                  user='root',
+                                  password='',
+                                  )
     cursor = connection.cursor()
-    return cursor
+except:
+    pass
+
 
 def create_database(cursor, connection):
     #create database
@@ -25,15 +26,43 @@ def create_database(cursor, connection):
     #create jobs table
     sql = "CREATE TABLE IF NOT EXISTS `jobs` (`job_id` INT NOT NULL AUTO_INCREMENT , `display` VARCHAR(30) NOT NULL , `averagePrintTime` FLOAT(30) NOT NULL , `volume` FLOAT(30) NOT NULL , PRIMARY KEY (`job_id`)) ENGINE = InnoDB;"
     cursor.execute(sql)
-    #create files n-m jobs table
+    #create files table
     sql = "CREATE TABLE filetojob (job_id INT NOT NULL, file_id INT NOT NULL, FOREIGN KEY (job_id) REFERENCES jobs (job_id), FOREIGN KEY (file_id) REFERENCES files (file_id));"
+    cursor.execute(sql)
     connection.commit()
+
 
 #create_database()
 
+#cursor = create_connection()[0]
+cursor.execute("use drucker_prozessdaten")
+#connection = create_connection()[1]
+
+def get_job_id(jobs):
+    display = str(jobs["display"])
+    date = str(jobs["date"])
+
+    sql = "SELECT job_id FROM jobs WHERE date ='" + date + "' AND display = '"+display+"';"
+
+    cursor.execute(sql)
+    result = cursor.fetchone()
+
+    return result
+
+def get_hash_from_display_date(jobs):
+    display = str(jobs["display"])
+    date = str(jobs["date"])
+
+    sql = "SELECT file_id FROM files WHERE date ='" + date + "' AND display = '" + display + "';"
+
+    cursor.execute(sql)
+    result = cursor.fetchone()
+
+    return result
+
 
 #stats TABLE
-def to_database_stats(cursor, connection, printer, files):
+def to_database_stats(printer, files):
     dt = str(datetime.now())
     state = str(printer["state"])
     temp_tool_i = str(printer["temp_tool_i"])
@@ -41,46 +70,76 @@ def to_database_stats(cursor, connection, printer, files):
     temp_bed_i = str(printer["temp_bed_i"])
     temp_bed_s = str(printer["temp_bed_s"])
     free = str(files[0]["free"])
+    #job_id = str(5)
 
-    sql = "INSERT INTO `stats` (`stat_id`, `time`, `state`, `temp_tool_i`, `temp_tool_s`, `temp_bed_i`, `temp_bed_s`, `free`) " \
-          "VALUES (NULL, '"+dt+"', '"+state+"', '"+temp_tool_i+"', '"+temp_tool_s+"', '"+temp_bed_i+"', '"+temp_bed_s+"', '"+free+"');"
+    #get current job
+    sql = "SELECT job_id FROM jobs ORDER BY job_id DESC LIMIT 1"
+    cursor.execute(sql)
+    result = cursor.fetchone()
+    job_id = str(result[0])
+
+
+
+    sql = "INSERT INTO `stats` (`stat_id`, `time`, `state`, `temp_tool_i`, `temp_tool_s`, `temp_bed_i`, `temp_bed_s`, `free`, `job`) " \
+          "VALUES (NULL, '"+dt+"', '"+state+"', '"+temp_tool_i+"', '"+temp_tool_s+"', '"+temp_bed_i+"', '"+temp_bed_s+"', '"+free+"', '"+job_id+"');"
 
     cursor.execute(sql)
     connection.commit()
 
 
 #files TABLE
-def to_database_files(cursor, connection, files):
+def to_database_files(files):
     for file in files:
         file_id = str(file["hash"])
         display = str(file["display"])
         download = str(file["download"])
+        date = str(file["date"])
 
-        sql = "INSERT IGNORE INTO `files` (`file_id`, `display`, `download`) VALUES ('"+file_id+"', '"+display+"', '"+download+"');"
+        sql = "INSERT IGNORE INTO `files` (`file_id`, `display`, `date`, `download`) VALUES ('"+file_id+"', '"+display+"', '"+date+"','"+download+"');"
 
         cursor.execute(sql)
         connection.commit()
 
+
+
 #jobs TABLE
-def to_database_jobs(cursor, connection, jobs):
-    display = str(jobs["display"])
+def to_database_jobs(jobs):
+    hash = str(get_hash_from_display_date(jobs)[0])
     averagePrintTime = str(jobs["averagePrintTime"])
     volume = str(jobs["volume"])
 
-    sql = "INSERT INTO `jobs` (`job_id`, `display`, `averagePrintTime`, `volume`) VALUES (NULL, '"+display+"', '"+averagePrintTime+"', '"+volume+"');"
-
+    #checking if job with hash is already in job table (no duplicate files possible)
+    sql = "SELECT file FROM jobs WHERE file ='" + hash + "';"
     cursor.execute(sql)
-    connection.commit()
+    if cursor.fetchone() is None:
+
+        sql = "INSERT IGNORE INTO `jobs` (`job_id`, `file`, `averagePrintTime`, `volume`) VALUES (NULL, '"+hash+"', '"+averagePrintTime+"', '"+volume+"');"
+
+        cursor.execute(sql)
+        connection.commit()
+
+    else: #wenn hash schonmal in jobs war gucke, ob der letzte job auch hash war, wenn nicht füge hinzu
+        sql = "SELECT file FROM jobs ORDER BY job_id DESC LIMIT 1"
+        cursor.execute(sql)
+        result = cursor.fetchone()
+        file = str(result[0])
+
+        if file != hash:
+            sql = "INSERT IGNORE INTO `jobs` (`job_id`, `file`, `averagePrintTime`, `volume`) VALUES (NULL, '" + hash + "', '" + averagePrintTime + "', '" + volume + "');"
+
+            cursor.execute(sql)
+            connection.commit()
+
 
 
 
 def to_database_all(printer, files, jobs):
 
-    to_database_jobs(jobs)
+    to_database_jobs(jobs) #muss zuerst sonst bekommt stats keine job_id
     to_database_stats(printer, files)
     to_database_files(files)
 
-def load_gcode(cursor, connection, dateiname):
+def load_gcode(dateiname):
     '''
     Lädt zu gegebenem Dateiname den GCode herunter
 
@@ -97,11 +156,8 @@ def load_gcode(cursor, connection, dateiname):
 
     open(dateiname, 'wb').write(r.content)
 
-    #return result[0]
 
-#load_gcode("testfile")
-
-def storage_progress(cursor, connection, von, bis):
+def storage_progress(von, bis):
     '''
     Gibt 2 Listen (zeitpunkt, wert) zurück, um den Verlauf des freien Speicherplatzes auf dem Server zu plotten
 
@@ -130,7 +186,7 @@ def storage_progress(cursor, connection, von, bis):
     return times, storage
 
 
-def count_states(cursor, connection, von, bis):
+def count_states(von, bis):
     '''
     Ermittelt, wie oft der Drucker im Zeitraum x in einem der Stati (Bereit, Aus, Druckt, Pausiert, Störung) war
 
@@ -170,5 +226,32 @@ def count_states(cursor, connection, von, bis):
 
     return state_dict
 
-def temp_progress(bauteil):
-    pass
+def get_all_jobs():
+    '''
+    Gibt alle Druckaufträge wieder
+    :return: tuple, gefüllt mit tuplen Bsp.: ((job_id, dateiname, downloadlink),(...))
+    :rtype: tuple
+    '''
+
+    sql = "SELECT job_id, display, download FROM jobs INNER JOIN files ON jobs.file = files.file_id"
+
+    cursor.execute(sql)
+    result = cursor.fetchall()
+
+    return(result)
+
+def temp_progress(job_id):
+    '''
+    Gibt die Temperaturen eines Druckauftrages + Zeit(datetime) wieder
+    :param job_id: identifiziert den geforderten job (welche man aus get_all_jobs() bekommt)
+    :return: tuple, gefüllt mit tuplen Bsp.: ((time, temp_tool_i, temp_tool_s, temp_bed_i, temp_bed_s),(...))
+    :rtype: tuple
+    '''
+
+    sql = "SELECT time, temp_tool_i, temp_tool_s, temp_bed_i, temp_bed_s FROM stats WHERE job ='" + str(job_id) + "';"
+
+    cursor.execute(sql)
+    result = cursor.fetchall()
+
+    return(result)
+
