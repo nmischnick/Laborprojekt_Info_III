@@ -20,11 +20,13 @@ def create_database():
     sql = "CREATE TABLE IF NOT EXISTS `stats` (`stat_id` INT NOT NULL AUTO_INCREMENT , `time` DATETIME NOT NULL , `state` VARCHAR(20) NOT NULL , `temp_tool_i` FLOAT(30) NOT NULL , `temp_tool_s` FLOAT(30) NOT NULL , `temp_bed_i` FLOAT(30) NOT NULL , `temp_bed_s` FLOAT(30) NOT NULL , `free` BIGINT(30) NOT NULL , PRIMARY KEY (`stat_id`)) ENGINE = InnoDB;"
     cursor.execute(sql)
     #create files table
-    sql = "CREATE TABLE IF NOT EXISTS `files` (`file_id` VARCHAR(100) NOT NULL , `display` VARCHAR(100) NOT NULL , `download` VARCHAR(100) NOT NULL , PRIMARY KEY (`file_id`)) ENGINE = InnoDB;"
+    sql = "CREATE TABLE IF NOT EXISTS `files` (`file_id` VARCHAR(100) NOT NULL , `display` VARCHAR(100) NOT NULL , `download` VARCHAR(100) NOT NULL , PRIMARY KEY (`file_id`)) ON DUPLICATE KEY UPDATE ENGINE = InnoDB;"
     cursor.execute(sql)
     #create jobs table
     sql = "CREATE TABLE IF NOT EXISTS `jobs` (`job_id` INT NOT NULL AUTO_INCREMENT , `display` VARCHAR(30) NOT NULL , `averagePrintTime` FLOAT(30) NOT NULL , `volume` FLOAT(30) NOT NULL , PRIMARY KEY (`job_id`)) ENGINE = InnoDB;"
     cursor.execute(sql)
+    #create files n-m jobs table
+    sql = "CREATE TABLE filetojob (job_id INT NOT NULL, file_id INT NOT NULL, FOREIGN KEY (job_id) REFERENCES jobs (job_id), FOREIGN KEY (file_id) REFERENCES files (file_id));"
 
 create_database()
 
@@ -166,3 +168,6 @@ def count_states(von, bis):
         state_dict[str(states[-1])] += 1
 
     return state_dict
+
+def temp_progress(bauteil):
+    pass
