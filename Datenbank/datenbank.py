@@ -80,7 +80,7 @@ def to_database_all(printer, files, jobs):
     to_database_stats(printer, files)
     to_database_files(files)
 
-def load_gcode(dateiname):
+def load_gcode(cursor, connection, dateiname):
     '''
     Lädt zu gegebenem Dateiname den GCode herunter
 
