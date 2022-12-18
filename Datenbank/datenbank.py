@@ -13,41 +13,62 @@ except:
     pass
 
 
-def create_database(cursor, connection):
+def create_database():
     #create database
-    cursor.execute("CREATE DATABASE IF NOT EXISTS drucker_prozessdaten")  # Entweder Statement direkt einfügen
-    cursor.execute("use drucker_prozessdaten")
-    #create stats table
-    sql = "CREATE TABLE IF NOT EXISTS `stats` (`stat_id` INT NOT NULL AUTO_INCREMENT , `time` DATETIME NOT NULL , `state` VARCHAR(20) NOT NULL , `temp_tool_i` FLOAT(30) NOT NULL , `temp_tool_s` FLOAT(30) NOT NULL , `temp_bed_i` FLOAT(30) NOT NULL , `temp_bed_s` FLOAT(30) NOT NULL , `free` BIGINT(30) NOT NULL , PRIMARY KEY (`stat_id`)) ENGINE = InnoDB;"
+    cursor.execute("CREATE DATABASE IF NOT EXISTS drucker_prozessdaten2")  # Entweder Statement direkt einfügen
+    cursor.execute("use drucker_prozessdaten2")
+
+    # create files table
+    sql = """
+            CREATE TABLE `files` (
+                `file_id` varchar(30) NOT NULL,
+                `display` varchar(30) NOT NULL,
+                `download` varchar(30) NOT NULL,
+                `date` int(11) NOT NULL,
+                PRIMARY KEY (`file_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+            """
     cursor.execute(sql)
-    #create files table
-    sql = "CREATE TABLE IF NOT EXISTS `files` (`file_id` VARCHAR(100) NOT NULL , `display` VARCHAR(100) NOT NULL , `download` VARCHAR(100) NOT NULL , PRIMARY KEY (`file_id`)) ON DUPLICATE KEY UPDATE ENGINE = InnoDB;"
-    cursor.execute(sql)
-    #create jobs table
-    sql = "CREATE TABLE IF NOT EXISTS `jobs` (`job_id` INT NOT NULL AUTO_INCREMENT , `display` VARCHAR(30) NOT NULL , `averagePrintTime` FLOAT(30) NOT NULL , `volume` FLOAT(30) NOT NULL , PRIMARY KEY (`job_id`)) ENGINE = InnoDB;"
-    cursor.execute(sql)
-    #create files table
-    sql = "CREATE TABLE filetojob (job_id INT NOT NULL, file_id INT NOT NULL, FOREIGN KEY (job_id) REFERENCES jobs (job_id), FOREIGN KEY (file_id) REFERENCES files (file_id));"
+
+    # create jobs table
+    sql = """
+            CREATE TABLE `jobs` (
+                `job_id` int(10) NOT NULL AUTO_INCREMENT,
+                `file` varchar(30) NOT NULL,
+                `averagePrintTime` float NOT NULL,
+                `volume` float NOT NULL,
+                PRIMARY KEY (`job_id`),
+                KEY `file_id_zu_file` (`file`),
+                CONSTRAINT `file_id_zu_file` FOREIGN KEY (`file`) REFERENCES `files` (`file_id`)
+            ) ENGINE=InnoDB AUTO_INCREMENT=24 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+            """
     cursor.execute(sql)
     connection.commit()
+
+    #create stats table
+    sql = """
+        CREATE TABLE `stats` (
+            `stat_id` int(10) NOT NULL AUTO_INCREMENT,
+            `time` datetime(6) NOT NULL,
+            `state` varchar(10) NOT NULL,
+            `temp_tool_i` float NOT NULL,
+            `temp_tool_s` float NOT NULL,
+            `temp_bed_i` float NOT NULL,
+            `temp_bed_s` float NOT NULL,
+            `free` bigint(30) NOT NULL,
+            `job` int(10) NOT NULL,
+            PRIMARY KEY (`stat_id`),
+            KEY `job` (`job`),
+            CONSTRAINT `stats_ibfk_1` FOREIGN KEY (`job`) REFERENCES `jobs` (`job_id`)
+        ) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+        """
+    cursor.execute(sql)
 
 
 #create_database()
 
-#cursor = create_connection()[0]
-#cursor.execute("use drucker_prozessdaten")
-#connection = create_connection()[1]
+#cursor.execute("use drucker_prozessdaten2")
 
-def get_job_id(jobs):
-    display = str(jobs["display"])
-    date = str(jobs["date"])
-
-    sql = "SELECT job_id FROM jobs WHERE date ='" + date + "' AND display = '"+display+"';"
-
-    cursor.execute(sql)
-    result = cursor.fetchone()
-
-    return result
 
 def get_hash_from_display_date(jobs):
     display = str(jobs["display"])
@@ -108,7 +129,7 @@ def to_database_jobs(jobs):
     averagePrintTime = str(jobs["averagePrintTime"])
     volume = str(jobs["volume"])
 
-    #checking if job with hash is already in job table (no duplicate files possible)
+    #checking if job with hash is already in job table (no printing same file after another possible)
     sql = "SELECT file FROM jobs WHERE file ='" + hash + "';"
     cursor.execute(sql)
     if cursor.fetchone() is None:
@@ -229,6 +250,7 @@ def count_states(von, bis):
 def get_all_jobs():
     '''
     Gibt alle Druckaufträge wieder
+
     :return: tuple, gefüllt mit tuplen Bsp.: ((job_id, dateiname, downloadlink),(...))
     :rtype: tuple
     '''
@@ -243,6 +265,7 @@ def get_all_jobs():
 def temp_progress(job_id):
     '''
     Gibt die Temperaturen eines Druckauftrages + Zeit(datetime) wieder
+
     :param job_id: identifiziert den geforderten job (welche man aus get_all_jobs() bekommt)
     :return: tuple, gefüllt mit tuplen Bsp.: ((time, temp_tool_i, temp_tool_s, temp_bed_i, temp_bed_s),(...))
     :rtype: tuple
