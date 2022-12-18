@@ -66,9 +66,9 @@ def create_database():
     cursor.execute(sql)
 
 
-create_database()
+#create_database()
 
-cursor.execute("use drucker_prozessdaten2")
+#cursor.execute("use drucker_prozessdaten2")
 
 
 def get_hash_from_display_date(jobs):
