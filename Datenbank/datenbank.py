@@ -3,6 +3,7 @@ from datetime import datetime
 import requests
 
 #Verbindung zur Datenbank herstellen
+
 try:
     connection = pymysql.connect(host='127.0.0.1',
                                   user='root',
@@ -20,7 +21,7 @@ def create_database():
 
     # create files table
     sql = """
-            CREATE TABLE `files` (
+            CREATE TABLE IF NOT EXISTS `files` (
                 `file_id` varchar(30) NOT NULL,
                 `display` varchar(30) NOT NULL,
                 `download` varchar(30) NOT NULL,
@@ -32,7 +33,7 @@ def create_database():
 
     # create jobs table
     sql = """
-            CREATE TABLE `jobs` (
+            CREATE TABLE IF NOT EXISTS `jobs` (
                 `job_id` int(10) NOT NULL AUTO_INCREMENT,
                 `file` varchar(30) NOT NULL,
                 `averagePrintTime` float NOT NULL,
@@ -47,7 +48,7 @@ def create_database():
 
     #create stats table
     sql = """
-        CREATE TABLE `stats` (
+        CREATE TABLE IF NOT EXISTS `stats` (
             `stat_id` int(10) NOT NULL AUTO_INCREMENT,
             `time` datetime(6) NOT NULL,
             `state` varchar(10) NOT NULL,
@@ -65,9 +66,9 @@ def create_database():
     cursor.execute(sql)
 
 
-#create_database()
+create_database()
 
-#cursor.execute("use drucker_prozessdaten2")
+cursor.execute("use drucker_prozessdaten2")
 
 
 def get_hash_from_display_date(jobs):
@@ -154,11 +155,12 @@ def to_database_jobs(jobs):
 
 
 
-def to_database_all(printer, files, jobs):
+def to_database_all(files, jobs, printer):
 
+    to_database_files(files)
     to_database_jobs(jobs) #muss zuerst sonst bekommt stats keine job_id
     to_database_stats(printer, files)
-    to_database_files(files)
+
 
 def load_gcode(dateiname):
     '''
@@ -277,4 +279,3 @@ def temp_progress(job_id):
     result = cursor.fetchall()
 
     return(result)
-
