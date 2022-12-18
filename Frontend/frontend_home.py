@@ -10,11 +10,9 @@ import tkinter as tk
 import tkinter.font as tkFont
 
 
-first =  True
-
 ### FUNKTIONEN
 def b_statistic_click():
-    root.destroy()
+    root.quit()                                 # quit um Fenster im Hintergrund zu halten
     fs
 
 def datum_uebernehmen():
@@ -34,19 +32,17 @@ connection(db)
 """
 
 ### START
-if (first == True):
-    first = False
-    root = tk.Tk()
-    root.title("Projekt - Labor Ingenieurinformatik 3")
-    width=600
-    height=500
-    screenwidth = root.winfo_screenwidth()
-    screenheight = root.winfo_screenheight()
-    alignstr = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
-    root.geometry(alignstr)
-    root.resizable(width=False, height=False)
+root = tk.Tk()
+root.title("Projekt - Labor Ingenieurinformatik 3")
+width=600
+height=500
+screenwidth = root.winfo_screenwidth()
+screenheight = root.winfo_screenheight()
+alignstr = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
+root.geometry(alignstr)
+root.resizable(width=False, height=False)
 
-bauteil = ("Doppel-T-Träger", "T-Träger", "L-Träger", "Vollwelle")
+bauteil = ("Doppel-T-Träger", "T-Träger", "L-Träger", "Vollwelle")      # aus Datenbank abfragen!
 var = tk.Variable(value=bauteil)
 var.set("Bauteil auswählen")
 
@@ -61,19 +57,20 @@ b_statistic = tk.Button(
 )
 b_statistic.place(x=510, y=10, width=70, height=25)
 
+### AUSWAHL START- & ENDDATUM
 start_ges = tk.Text(
         bg="#dddddd",
         font=tkFont.Font(family='Times', size=10),
         fg="#000000"
     )
-start_ges.place(x=320, y=40, width=200, height=70)
+start_ges.place(x=320, y=40, width=180, height=70)
 
 end_ges = tk.Text(
     bg="#dddddd",
         font=tkFont.Font(family='Times', size=10),
         fg="#000000"
 )
-end_ges.place(x=320, y=120, width=200, height=70)
+end_ges.place(x=320, y=120, width=180, height=70)
 
 startdatum1 = tk.Text(
     bg = "#dddddd",
@@ -81,7 +78,7 @@ startdatum1 = tk.Text(
     fg = "#000000"
 )
 text_startdatum1 = "Startdatum eingeben \nDD.MM.YYYY"
-startdatum1.insert(tk.END, text_startdatum1)
+startdatum1.insert(tk.END, text_startdatum1)        # Beschriftung in Textfeld einfügen
 startdatum1.place(x=10, y=40, width=150, height=50)
 
 startdatum2 = tk.Text(
@@ -90,11 +87,11 @@ startdatum2 = tk.Text(
     fg = "#000000"
 )
 text_startdatum2 = "\nHH:MM"
-startdatum2.insert(tk.END, text_startdatum2)
+startdatum2.insert(tk.END, text_startdatum2)        # Beschriftung in Textfeld einfügen
 startdatum2.place(x=160, y=40, width=150, height=50)
 
 
-e1_startdatum = tk.Entry(
+e1_startdatum = tk.Entry(                           # Eingabe Startdatum (Datum)
     bg = "#dddddd",
     font = tkFont.Font(family='Times',size=10),
     fg = "#000000",
@@ -102,7 +99,7 @@ e1_startdatum = tk.Entry(
 )
 e1_startdatum.place(x=10, y=80, width=150, height=25)
 
-e2_startdatum = tk.Entry(
+e2_startdatum = tk.Entry(                           # Eingabe Startdatum (Uhrzeit)
     bg = "#dddddd",
     font = tkFont.Font(family='Times',size=10),
     fg = "#000000",
@@ -116,7 +113,7 @@ enddatum1 = tk.Text(
     fg = "#000000"
 )
 text_enddatum1 = "Enddatum eingeben \nDD.MM.YYYY"
-enddatum1.insert(tk.END, text_enddatum1)
+enddatum1.insert(tk.END, text_enddatum1)                # Beschriftung in Textfeld einfügen
 enddatum1.place(x=10, y=120, width=150, height=50)
 
 enddatum2 = tk.Text(
@@ -125,10 +122,10 @@ enddatum2 = tk.Text(
     fg = "#000000"
 )
 text_enddatum2 = "\nHH:MM"
-enddatum2.insert(tk.END, text_enddatum2)
+enddatum2.insert(tk.END, text_enddatum2)                # Beschriftung in Textfeld einfügen
 enddatum2.place(x=160, y=120, width=150, height=50)
 
-e3_enddatum = tk.Entry(
+e3_enddatum = tk.Entry(                                 # Eingabe Enddatum (Datum)
     bg = "#dddddd",
     font = tkFont.Font(family='Times',size=10),
     fg = "#000000",
@@ -136,7 +133,7 @@ e3_enddatum = tk.Entry(
 )
 e3_enddatum.place(x=10, y=160, width=150, height=25)
 
-e4_enddatum = tk.Entry(
+e4_enddatum = tk.Entry(                                 # Eingabe Enddatum (Uhrzeit)
     bg = "#dddddd",
     font = tkFont.Font(family='Times',size=10),
     fg = "#000000",
@@ -144,7 +141,7 @@ e4_enddatum = tk.Entry(
 )
 e4_enddatum.place(x=160, y=160, width=150, height=25)
 
-b_datum = tk.Button(bg = "#dddddd",
+b_datum = tk.Button(bg = "#dddddd",                     # Dateneingabe (Start- & Enddatum) in jeweiliges Textfeld
     font = tkFont.Font(family='Times',size=10),
     fg = "#000000",
     justify = "center",
@@ -155,14 +152,14 @@ b_datum.place(x=90, y=200, width=150, height=25)
 
 
 ### BAUTEILAUSWAHL
-opt = tk.OptionMenu(root, var, *bauteil)             # Dropdownliste erstellen, *bauteil: alle Elemente aus Liste
+opt = tk.OptionMenu(root, var, *bauteil)                # Dropdownliste erstellen, *bauteil: alle Elemente aus Liste
 opt.config(width=90, font=('Helvetica', 10))
 opt.place(x=10, y=10, width=150, height=25)
 
 def callback(*args):
-    label["text"] = var.get()          # var.get(): in Dropdownmenü ausgewählter Wert
+    label["text"] = var.get()                           # var.get(): in Dropdownmenü ausgewählter Wert
     return
 
-var.trace("w", callback)        # nutzt callback-Fkt, um Varaiblenwert zu bekommen
+var.trace("w", callback)                                # nutzt callback-Fkt, um Varaiblenwert zu bekommen
 
 root.mainloop()

@@ -8,25 +8,21 @@ import frontend_home as fh
 import tkinter as tk
 import tkinter.font as tkFont
 
-first = True
-
 ### Funktionen
 def b_home_click():
-    newwin.destroy()
+    newwin.destroy()                           # destroy um Fenster zu vernichten
     fh
 
 ### START
-if (first == True):
-    first = False
-    newwin = tk.Tk()
-    newwin.title("Projekt - Labor Ingenieurinformatik 3")
-    width = 600
-    height = 500
-    screenwidth = newwin.winfo_screenwidth()
-    screenheight = newwin.winfo_screenheight()
-    alignstr = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
-    newwin.geometry(alignstr)
-    newwin.resizable(width=False, height=False)
+newwin = tk.Toplevel()                  # Toplevel, weil keine 2 Hauptfenster möglich!
+newwin.title("Projekt - Labor Ingenieurinformatik 3")
+width = 600
+height = 500
+screenwidth = newwin.winfo_screenwidth()
+screenheight = newwin.winfo_screenheight()
+alignstr = '%dx%d+%d+%d' % (width, height, (screenwidth - width) / 2, (screenheight - height) / 2)
+newwin.geometry(alignstr)
+newwin.resizable(width=False, height=False)
 
 label = tk.Label(
     newwin,
@@ -34,7 +30,7 @@ label = tk.Label(
     font=tkFont.Font(family='Times', size=10),
     fg="#000000",
     justify="center",
-    text="NEW WINDOW",
+    text="",
 )
 label.place(x=10, y=10, width=120, height=25)
 
