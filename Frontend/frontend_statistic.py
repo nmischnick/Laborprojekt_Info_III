@@ -14,7 +14,7 @@ def b_home_click():
     fh
 
 ### START
-newwin = tk.Toplevel()                  # Toplevel, weil keine 2 Hauptfenster möglich!
+newwin = tk.Toplevel(fh.root)                  # Toplevel, weil keine 2 Hauptfenster möglich!
 newwin.title("Projekt - Labor Ingenieurinformatik 3")
 width = 600
 height = 500
@@ -44,5 +44,3 @@ b_home = tk.Button(
     command=b_home_click
 )
 b_home.place(x=510, y=10, width=70, height=25)
-
-newwin.mainloop()

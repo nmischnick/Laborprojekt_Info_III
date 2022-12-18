@@ -16,10 +16,16 @@ def b_statistic_click():
     fs
 
 def datum_uebernehmen():
+    start_ges.configure(state='normal')                # Textwidget nicht mehr schreibgeschützt
+    end_ges.configure(state='normal')
+    start_ges.delete("1.0", "end")                     # Textfeld leeren
+    end_ges.delete("1.0", "end")
     text_start_ges = ("Ausgewähltes Startdatum:\n {}".format(e1_startdatum.get() + " " + e2_startdatum.get()))
     start_ges.insert(tk.END, text_start_ges)
+    start_ges.configure(state='disabled')       # Textwidget schreibgeschützt machen
     text_ende_ges = ("Ausgewähltes Enddatum:\n {}".format(e3_enddatum.get() + " " + e4_enddatum.get()))
     end_ges.insert(tk.END, text_ende_ges)
+    end_ges.configure(state='disabled')
 
 
 """
@@ -79,6 +85,7 @@ startdatum1 = tk.Text(
 )
 text_startdatum1 = "Startdatum eingeben \nDD.MM.YYYY"
 startdatum1.insert(tk.END, text_startdatum1)        # Beschriftung in Textfeld einfügen
+startdatum1.configure(state='disabled')
 startdatum1.place(x=10, y=40, width=150, height=50)
 
 startdatum2 = tk.Text(
@@ -88,6 +95,7 @@ startdatum2 = tk.Text(
 )
 text_startdatum2 = "\nHH:MM"
 startdatum2.insert(tk.END, text_startdatum2)        # Beschriftung in Textfeld einfügen
+startdatum2.configure(state='disable')
 startdatum2.place(x=160, y=40, width=150, height=50)
 
 
@@ -114,6 +122,7 @@ enddatum1 = tk.Text(
 )
 text_enddatum1 = "Enddatum eingeben \nDD.MM.YYYY"
 enddatum1.insert(tk.END, text_enddatum1)                # Beschriftung in Textfeld einfügen
+enddatum1.configure(state='disable')
 enddatum1.place(x=10, y=120, width=150, height=50)
 
 enddatum2 = tk.Text(
@@ -123,6 +132,7 @@ enddatum2 = tk.Text(
 )
 text_enddatum2 = "\nHH:MM"
 enddatum2.insert(tk.END, text_enddatum2)                # Beschriftung in Textfeld einfügen
+enddatum2.configure(state='disable')
 enddatum2.place(x=160, y=120, width=150, height=50)
 
 e3_enddatum = tk.Entry(                                 # Eingabe Enddatum (Datum)
@@ -157,8 +167,8 @@ opt.config(width=90, font=('Helvetica', 10))
 opt.place(x=10, y=10, width=150, height=25)
 
 def callback(*args):
-    label["text"] = var.get()                           # var.get(): in Dropdownmenü ausgewählter Wert
-    return
+    var.get()                           # var.get(): in Dropdownmenü ausgewählter Wert || label["text"] = var.get() ausgewählten Wert als Labeltitel
+    #return
 
 var.trace("w", callback)                                # nutzt callback-Fkt, um Varaiblenwert zu bekommen
 
