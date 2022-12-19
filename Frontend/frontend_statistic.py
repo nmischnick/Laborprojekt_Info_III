@@ -14,7 +14,7 @@ def b_home_click():
     fh
 
 ### START
-newwin = tk.Toplevel(fh.root)                  # Toplevel, weil keine 2 Hauptfenster möglich!
+newwin = tk.Toplevel(fh.root)                  # Toplevel, weil keine 2 Hauptfenster möglich! || Hauptfenster als Argument zur Bindung -> kein mainloop notwendig
 newwin.title("Projekt - Labor Ingenieurinformatik 3")
 width = 600
 height = 500

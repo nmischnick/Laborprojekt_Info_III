@@ -69,6 +69,7 @@ start_ges = tk.Text(
         font=tkFont.Font(family='Times', size=10),
         fg="#000000"
     )
+start_ges.configure(state="disable")
 start_ges.place(x=320, y=40, width=180, height=70)
 
 end_ges = tk.Text(
@@ -76,6 +77,7 @@ end_ges = tk.Text(
         font=tkFont.Font(family='Times', size=10),
         fg="#000000"
 )
+end_ges.configure(state="disable")
 end_ges.place(x=320, y=120, width=180, height=70)
 
 startdatum1 = tk.Text(
