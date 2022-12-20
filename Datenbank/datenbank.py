@@ -15,7 +15,13 @@ except:
 
 
 def create_database():
-    #create database
+    '''
+    Erstellt die Datenbank und die dazugehörigen Tabellen
+
+    :author: Luis Klimpke
+    :return: None
+    '''
+
     cursor.execute("CREATE DATABASE IF NOT EXISTS drucker_prozessdaten2")  # Entweder Statement direkt einfügen
     cursor.execute("use drucker_prozessdaten2")
 
@@ -25,7 +31,7 @@ def create_database():
                 `file_id` varchar(30) NOT NULL,
                 `display` varchar(30) NOT NULL,
                 `download` varchar(30) NOT NULL,
-                `date` int(11) NOT NULL,
+                `date` datetime(6) NOT NULL,
                 PRIMARY KEY (`file_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
             """
@@ -35,6 +41,7 @@ def create_database():
     sql = """
             CREATE TABLE IF NOT EXISTS `jobs` (
                 `job_id` int(10) NOT NULL AUTO_INCREMENT,
+                `time` datetime(6) NOT NULL,
                 `file` varchar(30) NOT NULL,
                 `averagePrintTime` float NOT NULL,
                 `volume` float NOT NULL,
@@ -72,6 +79,15 @@ def create_database():
 
 
 def get_hash_from_display_date(jobs):
+    '''
+    Liefert den hash der Datei zurück(Primary Key) zu dann geg. Namen und Datum der Datei aus jobs Tabelle.
+    Nötig für Verknüpfung von files und jobs
+
+    :author: Luis Klimpke
+    :param jobs: jobs-json-daten
+    :return: file_id bzw der hash der geforderten Datei
+    :rtype: str
+    '''
     display = str(jobs["display"])
     date = str(jobs["date"])
 
@@ -80,11 +96,19 @@ def get_hash_from_display_date(jobs):
     cursor.execute(sql)
     result = cursor.fetchone()
 
-    return result
+    return str(result)
 
 
 #stats TABLE
 def to_database_stats(printer, files):
+    '''
+    Fügt die Daten aus dem geg. Dicts in stats Tabelle ein
+
+    :author: Luis Klimpke
+    :param printer: printer-json-daten
+    :param files: files-json-daten
+    :return: None
+    '''
     dt = str(datetime.now())
     state = str(printer["state"])
     temp_tool_i = str(printer["temp_tool_i"])
@@ -100,8 +124,6 @@ def to_database_stats(printer, files):
     result = cursor.fetchone()
     job_id = str(result[0])
 
-
-
     sql = "INSERT INTO `stats` (`stat_id`, `time`, `state`, `temp_tool_i`, `temp_tool_s`, `temp_bed_i`, `temp_bed_s`, `free`, `job`) " \
           "VALUES (NULL, '"+dt+"', '"+state+"', '"+temp_tool_i+"', '"+temp_tool_s+"', '"+temp_bed_i+"', '"+temp_bed_s+"', '"+free+"', '"+job_id+"');"
 
@@ -111,6 +133,13 @@ def to_database_stats(printer, files):
 
 #files TABLE
 def to_database_files(files):
+    '''
+    Fügt die Daten aus dem geg. Dict in files Tabelle ein
+
+    :author: Luis Klimpke
+    :param files: files-json-daten
+    :return: None
+    '''
     for file in files:
         file_id = str(file["hash"])
         display = str(file["display"])
@@ -126,16 +155,25 @@ def to_database_files(files):
 
 #jobs TABLE
 def to_database_jobs(jobs):
+    '''
+    Fügt die Daten aus dem geg. Dict in jobs Tabelle ein
+
+    :author: Luis Klimpke
+    :param jobs: jobs-json-daten
+    :return: None
+    '''
+
     hash = str(get_hash_from_display_date(jobs)[0])
     averagePrintTime = str(jobs["averagePrintTime"])
     volume = str(jobs["volume"])
+    dt = datetime.now()
 
     #checking if job with hash is already in job table (no printing same file after another possible)
     sql = "SELECT file FROM jobs WHERE file ='" + hash + "';"
     cursor.execute(sql)
     if cursor.fetchone() is None:
 
-        sql = "INSERT IGNORE INTO `jobs` (`job_id`, `file`, `averagePrintTime`, `volume`) VALUES (NULL, '"+hash+"', '"+averagePrintTime+"', '"+volume+"');"
+        sql = "INSERT IGNORE INTO `jobs` (`job_id`, `file`, `averagePrintTime`, `volume`, `date`) VALUES (NULL, '"+hash+"', '"+averagePrintTime+"', '"+volume+"', '"+dt+"');"
 
         cursor.execute(sql)
         connection.commit()
@@ -147,8 +185,7 @@ def to_database_jobs(jobs):
         file = str(result[0])
 
         if file != hash:
-            sql = "INSERT IGNORE INTO `jobs` (`job_id`, `file`, `averagePrintTime`, `volume`) VALUES (NULL, '" + hash + "', '" + averagePrintTime + "', '" + volume + "');"
-
+            sql = "INSERT IGNORE INTO `jobs` (`job_id`, `file`, `averagePrintTime`, `volume`, `date`) VALUES (NULL, '"+hash+"', '"+averagePrintTime+"', '"+volume+"', '"+dt+"');"
             cursor.execute(sql)
             connection.commit()
 
@@ -156,6 +193,15 @@ def to_database_jobs(jobs):
 
 
 def to_database_all(files, jobs, printer):
+    '''
+    Fügt alle Funktionen zusammen, die json-Daten in Datenbank hochladen
+
+    :author: Luis Klimpke
+    :param files: files-json-daten
+    :param jobs: jobs-json-daten
+    :param printer: printer-json-daten
+    :return: None
+    '''
 
     to_database_files(files)
     to_database_jobs(jobs) #muss zuerst sonst bekommt stats keine job_id
@@ -166,6 +212,7 @@ def load_gcode(dateiname):
     '''
     Lädt zu gegebenem Dateiname den GCode herunter
 
+    :author: Luis Klimpke
     :param dateiname: Name der Datei zu der der GCode heruntergeladen werden soll
     :return: None
     '''
@@ -184,6 +231,7 @@ def storage_progress(von, bis):
     '''
     Gibt 2 Listen (zeitpunkt, wert) zurück, um den Verlauf des freien Speicherplatzes auf dem Server zu plotten
 
+    :author: Luis Klimpke
     :param von: Zeitpunkt, ab dem der Verlauf beginnen soll
     :param bis: Zeitpunkt, an dem der Verlauf enden soll
     :return: 2 Listen mit Zeitpunkt und Wert
@@ -213,6 +261,7 @@ def count_states(von, bis):
     '''
     Ermittelt, wie oft der Drucker im Zeitraum x in einem der Stati (Bereit, Aus, Druckt, Pausiert, Störung) war
 
+    :author: Luis Klimpke
     :param von: Zeitpunkt, ab dem der Verlauf beginnen soll
     :param bis: Zeitpunkt, an dem der Verlauf enden soll
     :return: Dictionary mit status als key und Anzahl als value
@@ -253,6 +302,7 @@ def get_all_jobs():
     '''
     Gibt alle Druckaufträge wieder
 
+    :author: Luis Klimpke
     :return: tuple, gefüllt mit tuplen Bsp.: ((job_id, dateiname, downloadlink),(...))
     :rtype: tuple
     '''
@@ -268,6 +318,7 @@ def temp_progress(job_id):
     '''
     Gibt die Temperaturen eines Druckauftrages + Zeit(datetime) wieder
 
+    :author: Luis Klimpke
     :param job_id: identifiziert den geforderten job (welche man aus get_all_jobs() bekommt)
     :return: tuple, gefüllt mit tuplen Bsp.: ((time, temp_tool_i, temp_tool_s, temp_bed_i, temp_bed_s),(...))
     :rtype: tuple
@@ -279,3 +330,4 @@ def temp_progress(job_id):
     result = cursor.fetchall()
 
     return(result)
+
