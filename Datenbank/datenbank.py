@@ -283,17 +283,25 @@ def temp_progress(job_id):
     return(result)
 
 
-def object_count_period():
+def object_count_period(von, bis):
+    '''
+        Ermittelt, wie oft ein bestimmter Job erfolgreich ausgerührt wurde
+
+        :author: Marcel Lindwedel
+        :param von: Zeitpunkt, ab dem der Verlauf beginnen soll
+        :param bis: Zeitpunkt, an dem der Verlauf enden soll
+    '''
+
     job_id = []
     success = []
 
     counter = 0
 
-    start_input = input('Enter Start date [Format: YYYY,M,D  -  2014,01,23] : ')
+    start_input = von
     start_dt_obj = datetime.strptime(start_input, '%Y,%m,%d')
     start = datetime.strftime(start_dt_obj, '%Y,%m,%d')
 
-    end_input = input('Enter End date   [Format: YYYY,M,D  -  2015,08,23] : ')
+    end_input = bis
     end_dt_obj = datetime.strptime(end_input, '%Y,%m,%d')
     end = datetime.strftime(end_dt_obj, '%Y,%m,%d')
 
@@ -313,15 +321,22 @@ def object_count_period():
         print("Job:", job_id[counter], "wurde", success[counter], "Mal erfolgreich gedruckt!")
         counter += 1
 
-def average_volume_period():
+def average_volume_period(von, bis):
+    '''
+         Ermittelt, wie viel Volumen in einem bestimmten Zeitraum verbraucht wurde
+
+         :author: Marcel Lindwedel
+         :param von: Zeitpunkt, ab dem der Verlauf beginnen soll
+         :param bis: Zeitpunkt, an dem der Verlauf enden soll
+     '''
 
     volume = []
 
-    start_input = input('Enter Start date [Format: YYYY,M,D  -  2020,02,14 : ')
+    start_input = von
     start_dt_obj = datetime.strptime(start_input, '%Y,%m,%d')
     start = datetime.strftime(start_dt_obj, '%Y,%m,%d')
 
-    end_input = input('Enter End date   [Format: YYYY,M,D  -  2022,12,24 : ')
+    end_input = bis
     end_dt_obj = datetime.strptime(end_input, '%Y,%m,%d')
     end = datetime.strftime(end_dt_obj, '%Y,%m,%d')
 
@@ -337,16 +352,16 @@ def average_volume_period():
     print(sum(volume) / len(volume))
 
 def average_print_time():
+    '''
+         Ermittelt, wie die durchschnittliche Durckzeit eines Objektes ist
+
+         :author: Marcel Lindwedel
+     '''
+
     job_id = []
     averagePrintTime = []
 
-    j_n_abfrage = input("Möchten Sie die durchschnittliche Druckdauer von einem bestimmten Produkt erfahren? (j/n)")
-
-    if j_n_abfrage == "j":
-        counter = int(input("Von welchem Produkt möchten Sie die Druckdauer erfahren?")) - 1
-
-    else:
-        counter = 0
+    counter = 0
 
     sql = "SELECT job_id, averagePrintTime FROM jobs;"
 
@@ -359,8 +374,4 @@ def average_print_time():
 
     while counter < len(result):
         print("Job:", job_id[counter], "Hat eine durchschnittliche Druckdauer von:", averagePrintTime[counter])
-
-        if j_n_abfrage == "n":
-            counter += 1
-        else:
-            break
+        counter += 1
