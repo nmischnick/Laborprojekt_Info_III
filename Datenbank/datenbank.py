@@ -1,6 +1,7 @@
 import pymysql   #für die Verbindung zur MySQL-Datenbank
 from datetime import datetime
 import requests
+from collections import Counter
 
 #Verbindung zur Datenbank herstellen
 
@@ -283,43 +284,30 @@ def temp_progress(job_id):
     return(result)
 
 
-def object_count_period(von, bis):
+def object_count_period(von, bis, file):
     '''
         Ermittelt, wie oft ein bestimmter Job erfolgreich ausgerührt wurde
 
         :author: Marcel Lindwedel
         :param von: Zeitpunkt, ab dem der Verlauf beginnen soll
         :param bis: Zeitpunkt, an dem der Verlauf enden soll
+        :param file: bestimmte Objektart
     '''
 
-    job_id = []
-    success = []
+    #file = "1"
 
-    counter = 0
+    anzahl = []
 
-    start_input = von
-    start_dt_obj = datetime.strptime(start_input, '%Y,%m,%d')
-    start = datetime.strftime(start_dt_obj, '%Y,%m,%d')
-
-    end_input = bis
-    end_dt_obj = datetime.strptime(end_input, '%Y,%m,%d')
-    end = datetime.strftime(end_dt_obj, '%Y,%m,%d')
-
-    sql = "SELECT job_id, success, time FROM jobs WHERE time < '" + str(end) + "' AND time > '" + str(start) + "' ORDER BY time ASC;"
-
-    # print(success)
+    sql = "SELECT file, time FROM jobs WHERE time < '" + str(bis) + "' AND time > '" + str(von) + "' ORDER BY time ASC;"
 
     cursor.execute(sql)
     result = cursor.fetchall()
-    print(result)
 
     for i in result:
-        job_id.append(i[0])
-        success.append(i[1])
+        anzahl.append(i[0])
 
-    while counter < len(result):
-        print("Job:", job_id[counter], "wurde", success[counter], "Mal erfolgreich gedruckt!")
-        counter += 1
+    anzahl_all = (Counter(anzahl))
+    print("Es wurden von Objekt", file, "insgesamt", anzahl_all[file], "Stücke gefertigt")
 
 def average_volume_period(von, bis):
     '''
@@ -332,16 +320,7 @@ def average_volume_period(von, bis):
 
     volume = []
 
-    start_input = von
-    start_dt_obj = datetime.strptime(start_input, '%Y,%m,%d')
-    start = datetime.strftime(start_dt_obj, '%Y,%m,%d')
-
-    end_input = bis
-    end_dt_obj = datetime.strptime(end_input, '%Y,%m,%d')
-    end = datetime.strftime(end_dt_obj, '%Y,%m,%d')
-
-    sql = "SELECT time, volume FROM jobs WHERE time < '" + str(end) + "' AND time > '" + str(
-        start) + "' ORDER BY time ASC;"
+    sql = "SELECT time, volume FROM jobs WHERE time < '" + str(bis) + "' AND time > '" + str(von) + "' ORDER BY time ASC;"
 
     cursor.execute(sql)
     result = cursor.fetchall()
