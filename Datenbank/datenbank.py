@@ -24,8 +24,8 @@ def create_database():
     :return: None
     """
 
-    cursor.execute("CREATE DATABASE IF NOT EXISTS drucker_prozessdaten2")  # Entweder Statement direkt einfügen
-    cursor.execute("use drucker_prozessdaten2")
+    cursor.execute("CREATE DATABASE IF NOT EXISTS drucker_prozessdaten")  # Entweder Statement direkt einfügen
+    cursor.execute("use drucker_prozessdaten")
 
     # create files table
     sql = """
@@ -33,7 +33,7 @@ def create_database():
                 `file_id` varchar(30) NOT NULL,
                 `display` varchar(30) NOT NULL,
                 `download` varchar(30) NOT NULL,
-                `date` datetime(6) NOT NULL,
+                `date` int(10) NOT NULL,
                 PRIMARY KEY (`file_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
             """

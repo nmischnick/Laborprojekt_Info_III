@@ -45,10 +45,13 @@ def get_json(url):
     Diese Funktion dient zum Abfangen von Verbindungsfehlern und falschen Strings.
     Über diese Funktion bekommt das json_filter Programm zugriff auf die JSON-Strings von dem Server
     """
-    try:
+    """try:
         string = GetData.server_request(url)        # Versuche Verbindung über URL zu bekommen
     except TimeoutError:
         return "Error: Verbindungsfehler"           # Wenn TimeoutError gebe dies zurück
     if GetData.check_json_error(string) is False:   # Wenn Prüfung Error False, dann gebe string zurück
         return string
-    return "Error: JSON_String"                     # Wenn Prüfung Error True, dann gebe dies zurück
+    return "Error: JSON_String" """                    # Wenn Prüfung Error True, dann gebe dies zurück
+
+    string = GetData.server_request(url)
+    return string
