@@ -7,6 +7,7 @@ letzte Änderung: 21.12.22
 
 import json
 import requests
+import ast
 
 
 class GetData:
@@ -32,9 +33,11 @@ class GetData:
         und ob der JSON-String einen Error enthält
         """
         try:
-            jdata = json.loads(str(data))       # prüfe, ob zurückgegebene Datei wirklich json ist
-            if "error" in jdata:                # wenn ja, prüfe, ob json einen Error enthält
-                return True                     # wenn Error, gebe True zurück
+            data = ast.literal_eval(data)  # wertet die json Funktion mit trees richtig aus
+            data = json.dumps(data)  # konvertiert den ausgewerteten Wert in den passenden JSON
+            jdata = json.loads(data)       # prüfe, ob zurückgegebene Datei wirklich json ist
+            if "error" in jdata.keys():                # wenn ja, prüfe, ob json einen Error enthält
+                return True               # wenn Error, gebe True zurück
         except ValueError:
             return True                         # wenn kein json gebe True zurück
         return False                            # wenn json ohne Error, gebe False zurück
