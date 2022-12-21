@@ -68,6 +68,6 @@ class TestOctoprint(unittest.TestCase):
         Diese Funktion testet die Funktion "check_json_error"
         auf einen fehlerfreien JSON-String
         """
-        mock_response.json = JSON_PRINTER
+        mock_response.json = JSON_JOB
         mock_requests.get.return_value = mock_response
-        self.assertEqual(GetData.check_json_error(JSON_PRINTER), False)
+        self.assertEqual(GetData.check_json_error(JSON_JOB), False)
