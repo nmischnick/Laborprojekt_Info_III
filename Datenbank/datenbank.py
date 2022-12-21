@@ -3,6 +3,7 @@ from datetime import datetime
 import requests
 from collections import Counter
 
+
 # Verbindung zur Datenbank herstellen
 
 try:
