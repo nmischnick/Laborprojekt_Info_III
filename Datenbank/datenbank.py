@@ -1,6 +1,7 @@
 import pymysql  # für die Verbindung zur MySQL-Datenbank
 from datetime import datetime
 import requests
+from collections import Counter
 
 # Verbindung zur Datenbank herstellen
 
@@ -327,4 +328,76 @@ def temp_progress(job_id):
     cursor.execute(sql)
     result = cursor.fetchall()
 
-    return result
+    return(result)
+
+
+def object_count_period(von, bis, file):
+    """
+    Ermittelt, wie oft ein bestimmter Job erfolgreich ausgerührt wurde
+
+    :author: Marcel Lindwedel
+    :param von: Zeitpunkt, ab dem der Verlauf beginnen soll
+    :param bis: Zeitpunkt, an dem der Verlauf enden soll
+    :param file: bestimmte Objektart
+    """
+
+    #file = "1"
+
+    anzahl = []
+
+    sql = "SELECT file, time FROM jobs WHERE time < '" + str(bis) + "' AND time > '" + str(von) + "' ORDER BY time ASC;"
+
+    cursor.execute(sql)
+    result = cursor.fetchall()
+
+    for i in result:
+        anzahl.append(i[0])
+
+    anzahl_all = (Counter(anzahl))
+    print("Es wurden von Objekt", file, "insgesamt", anzahl_all[file], "Stücke gefertigt")
+
+def average_volume_period(von, bis):
+    """
+    Ermittelt, wie viel Volumen in einem bestimmten Zeitraum verbraucht wurde
+
+    :author: Marcel Lindwedel
+    :param von: Zeitpunkt, ab dem der Verlauf beginnen soll
+    :param bis: Zeitpunkt, an dem der Verlauf enden soll
+    """
+
+    volume = []
+
+    sql = "SELECT time, volume FROM jobs WHERE time < '" + str(bis) + "' AND time > '" + str(von) + "' ORDER BY time ASC;"
+
+    cursor.execute(sql)
+    result = cursor.fetchall()
+
+    for i in result:
+        volume.append(i[1])
+
+    print(sum(volume) / len(volume))
+
+def average_print_time():
+    """
+    Ermittelt, wie die durchschnittliche Durckzeit eines Objektes ist
+
+    :author: Marcel Lindwedel
+    """
+
+    job_id = []
+    averagePrintTime = []
+
+    counter = 0
+
+    sql = "SELECT job_id, averagePrintTime FROM jobs;"
+
+    cursor.execute(sql)
+    result = cursor.fetchall()
+
+    for i in result:
+        job_id.append(i[0])
+        averagePrintTime.append(i[1])
+
+    while counter < len(result):
+        print("Job:", job_id[counter], "Hat eine durchschnittliche Druckdauer von:", averagePrintTime[counter])
+        counter += 1
