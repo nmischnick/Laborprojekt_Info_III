@@ -11,9 +11,12 @@ PRINTER_URL = "http://141.41.42.192/api/printer?apikey=A7DBE849344A42A0B22C50CA2
 JOB_URL = "http://141.41.42.192/api/job?apikey=A7DBE849344A42A0B22C50CA22EC6210"
 FILES_URL = "http://141.41.42.192/api/files?apikey=A7DBE849344A42A0B22C50CA22EC6210"
 
-def printer_api_f(json_str):
-    "Die Funktion bearbeitet den Json_printer_api_string. Dabei werden die False Werte rausgelöscht."
-    json_info = json.loads(json_str)            #json wird gelesen
+def printer_api_f():
+    "Die Funktion ruft den String vom Server bearbeitet den Json_printer_api_string. Dabei werden die False Werte rausgelöscht."
+    printer_api = octoprint.get_json(PRINTER_URL)  # json str wird aufgerufen
+    printer_api = ast.literal_eval(printer_api)  # wertet die json Funktion mit trees richtig aus
+    printer_api = json.dumps(printer_api)  # konvertiert den ausgewerteten Wert in den passenden JSON
+    json_info = json.loads(printer_api)            #json wird gelesen
     state = json_info["state"]                  # json baum wird definiert
     flags = state['flags']                      #json unterbaum wird definiert
     state = {}
@@ -33,9 +36,12 @@ def printer_api_f(json_str):
     printer_api_data = {"state":state,"temp_tool_i":temp_tool_i,"temp_tool_s":temp_tool_s,"temp_bed_i":temp_bed_i,"temp_bed_s":temp_bed_s} #daten in eigene Dict
     return printer_api_data
 
-def job_api_f(json_str):
-    "Die Funktion bearbeitet den Json_job_api_string. Die wichtigen Werte werden im neuen Dict gespeichert."
-    json_info = json.loads(json_str)                            #json wird gelesen
+def job_api_f():
+    "Die Funktion ruft den String vom Server und bearbeitet den Json_job_api_string. Die wichtigen Werte werden im neuen Dict gespeichert."
+    job_api = octoprint.get_json(JOB_URL)
+    job_api = ast.literal_eval(job_api)
+    job_api = json.dumps(job_api)
+    json_info = json.loads(job_api)                            #json wird gelesen
     average_print_time =json_info["job"]['averagePrintTime']      #daten definieren mit path
     volume = json_info['job']['filament']['tool0']['volume']
     display = json_info['job']['file']['display']
@@ -43,9 +49,12 @@ def job_api_f(json_str):
     job_api_data = {'averagePrintTime':average_print_time,"volume":volume,"date":date,"display":display}  #daten in eigene Dict
     return job_api_data
 
-def files_api_f(json_str):
-    "Die Funktion bearbeitet den Json_files_api_string. Da der String aus mehreren Bäumen besteht, werden die nacheinander bearbeitet."
-    json_info = json.loads(json_str)    #json wird gelesen
+def files_api_f():
+    "Die Funktion ruft den String vom Server bearbeitet den Json_files_api_string. Da der String aus mehreren Bäumen besteht, werden die nacheinander bearbeitet."
+    files_api = octoprint.get_json(FILES_URL)
+    files_api = ast.literal_eval(files_api)
+    files_api = json.dumps(files_api)
+    json_info = json.loads(files_api)    #json wird gelesen
     files = json_info['files']          #json baum wird definiert
     liste =[]
     for i in range(0,len(files)):
@@ -74,21 +83,4 @@ def files_api_f(json_str):
         liste.append(files_api_data)
     return liste
 
-printer_api = octoprint.get_json(PRINTER_URL)   #json str wird aufgerufen
-printer_api = ast.literal_eval(printer_api)     #wertet die json Funktion mit trees richtig aus
-printer_api = json.dumps(printer_api)           #konvertiert den ausgewerteten Wert in den passenden JSON
-werte_printer_api = printer_api_f(printer_api)  #ruft die Funktion auf
 
-job_api = octoprint.get_json(JOB_URL)
-job_api = ast.literal_eval(job_api)
-job_api = json.dumps(job_api)
-werte_job_api = job_api_f(job_api)
-
-files_api = octoprint.get_json(FILES_URL)
-files_api = ast.literal_eval(files_api)
-files_api = json.dumps(files_api)
-werte_files_api = files_api_f(files_api)
-
-print(werte_printer_api)
-print(werte_job_api)
-print(werte_files_api)
