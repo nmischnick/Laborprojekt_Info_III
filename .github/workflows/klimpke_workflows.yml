@@ -1,10 +1,10 @@
-name: Datenbank_workflow
+name: main_zusammen_workflow
 
 on:
   push:
-    branches: [ "Datenbank" ]
+    branches: [ "main_zusammen" ]
   pull_request:
-    branches: [ "Datenbank" ]
+    branches: [ "main_zusammen" ]
 
 jobs:
   build:
