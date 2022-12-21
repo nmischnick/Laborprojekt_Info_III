@@ -1,10 +1,10 @@
-name: klimpke_workflows
+name: Datenbank_workflow
 
 on:
   push:
-    branches: [ "Datenbank_Luis" ]
+    branches: [ "Datenbank" ]
   pull_request:
-    branches: [ "Datenbank_Luis" ]
+    branches: [ "Datenbank" ]
 
 jobs:
   build:
