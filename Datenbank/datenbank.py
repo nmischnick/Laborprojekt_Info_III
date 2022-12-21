@@ -25,8 +25,9 @@ def create_database():
     """
 
     cursor.execute("CREATE DATABASE IF NOT EXISTS drucker_prozessdaten")  # Entweder Statement direkt einfügen
+    connection.commit()
     cursor.execute("use drucker_prozessdaten")
-
+    connection.commit()
     # create files table
     sql = """
             CREATE TABLE IF NOT EXISTS `files` (
@@ -73,6 +74,7 @@ def create_database():
         ) ENGINE=InnoDB AUTO_INCREMENT=27 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
         """
     cursor.execute(sql)
+    connection.commit()
 
 
 # create_database()
@@ -93,10 +95,13 @@ def get_hash_from_display_date(jobs):
     display = str(jobs["display"])
     date = str(jobs["date"])
 
+    for i in range(6):
+        display = display[:-1]
+
     sql = "SELECT file_id FROM files WHERE date ='" + date + "' AND display = '" + display + "';"
 
     cursor.execute(sql)
-    result = cursor.fetchone()
+    result = cursor.fetchone()[0]
 
     return str(result)
 
@@ -124,7 +129,10 @@ def to_database_stats(printer, files):
     sql = "SELECT job_id FROM jobs ORDER BY job_id DESC LIMIT 1"
     cursor.execute(sql)
     result = cursor.fetchone()
-    job_id = str(result[0])
+    try:
+        job_id = str(result[0])
+    except:
+        pass
 
     sql = "INSERT INTO `stats` (`stat_id`, `time`, `state`, `temp_tool_i`, `temp_tool_s`, `temp_bed_i`, `temp_bed_s`, `free`, `job`) " \
           "VALUES (NULL, '" + dt + "', '" + state + "', '" + temp_tool_i + "', '" + temp_tool_s + "', '" + temp_bed_i + "', '" + temp_bed_s + "', '" + free + "', '" + job_id + "');"
@@ -143,15 +151,17 @@ def to_database_files(files):
     :return: None
     """
     for file in files:
+
         file_id = str(file["hash"])
-        display = str(file["display"])
-        download = str(file["download"])
-        date = str(file["date"])
+        if file_id != None:
+            display = str(file["display"])
+            download = str(file["download"])
+            date = str(file["date"])
 
-        sql = "INSERT IGNORE INTO `files` (`file_id`, `display`, `date`, `download`) VALUES ('" + file_id + "', '" + display + "', '" + date + "','" + download + "');"
+            sql = "INSERT IGNORE INTO `files` (`file_id`, `display`, `date`, `download`) VALUES ('" + file_id + "', '" + display + "', '" + date + "','" + download + "');"
 
-        cursor.execute(sql)
-        connection.commit()
+            cursor.execute(sql)
+            connection.commit()
 
 
 # jobs TABLE
@@ -164,7 +174,7 @@ def to_database_jobs(jobs):
     :return: None
     """
 
-    hash = str(get_hash_from_display_date(jobs)[0])
+    hash = str(get_hash_from_display_date(jobs))
     averagePrintTime = str(jobs["averagePrintTime"])
     volume = str(jobs["volume"])
     dt = str(datetime.now())
@@ -173,8 +183,8 @@ def to_database_jobs(jobs):
     sql = "SELECT file FROM jobs WHERE file ='" + hash + "';"
     cursor.execute(sql)
     if cursor.fetchone() is None:
-
-        sql = "INSERT IGNORE INTO `jobs` (`job_id`, `file`, `averagePrintTime`, `volume`, `date`) VALUES (NULL, '" + hash + "', '" + averagePrintTime + "', '" + volume + "', '" + dt + "');"
+        print("hash: ", hash)
+        sql = "INSERT IGNORE INTO `jobs` (`job_id`, `file`, `averagePrintTime`, `volume`, `time`) VALUES (NULL, '" + hash + "', '" + averagePrintTime + "', '" + volume + "', '" + dt + "');"
 
         cursor.execute(sql)
         connection.commit()

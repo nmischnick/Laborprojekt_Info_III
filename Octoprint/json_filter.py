@@ -19,14 +19,16 @@ def printer_api_f():
     json_info = json.loads(printer_api)            #json wird gelesen
     state = json_info["state"]                  # json baum wird definiert
     flags = state['flags']                      #json unterbaum wird definiert
-    state = {}
+    state = ""
     for key, value in dict(flags).items():
         if value is False:                      # wenn key = false wird entfernt
             del flags[key]
-        else:                                   #wenn key != false wird er in die dict hinzugefügt
-            name = key
-            value = flags[key]
-            state[name] = value
+        elif key in ["error", "printing", "paused", "ready"]:                                   #wenn key != false wird er in die dict hinzugefügt
+
+            state = key
+
+        else:
+            state = "ready"
 
     temperatur = json_info['temperature']       #daten definieren mit path
     temp_bed_i = temperatur['bed']['actual']
