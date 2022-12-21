@@ -6,9 +6,9 @@ Datum: 14.12.2022
 
 from unittest.mock import MagicMock
 import json
-from Octoprint_Jure import printer_api_f
-from Octoprint_Jure import job_api_f
-from Octoprint_Jure import files_api_f
+from json_filter_mock import printer_api_f
+from json_filter_mock import job_api_f
+from json_filter_mock import files_api_f
 
 def test_can_call_printer_api():
     """Die Funktion testet, ob die printer_api Json-String aufgerugen werden kann"""
