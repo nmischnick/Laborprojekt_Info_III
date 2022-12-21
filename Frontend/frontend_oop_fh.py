@@ -4,6 +4,7 @@
 """
 
 ### Imports
+import datenabfrage
 import tkinter as tk
 import tkinter.messagebox as msg
 import datetime
@@ -12,7 +13,6 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 
 matplotlib.use('TkAgg')     # festlegen, welches Backend matplotlib nutzen soll
-
 
 root = tk.Tk()              # Fenster initialisieren
 
@@ -23,12 +23,12 @@ class App():
     dt_startdatum = ""
     dt_enddatum = ""
 
-    def __init__(self, master):
-        master.title("Projekt - Labor Ingenieurinformatik 3")           # Fenstertitel festlegen
-        master.geometry("600x600")                                      # Fenstergöße festlegen
-        master.minsize(width=400, height=400)                           # minimale Fenstergröße
-        master.maxsize(width=1200, height=1200)                         # maximale Fenstergröße
-        master.resizable(width=True, height=True)                       # Größenänderung mit Maus möglich
+    def __init__(self):
+        root.title("Projekt - Labor Ingenieurinformatik 3")           # Fenstertitel festlegen
+        root.geometry("600x600")                                      # Fenstergöße festlegen
+        root.minsize(width=400, height=400)                           # minimale Fenstergröße
+        root.maxsize(width=1200, height=1200)                         # maximale Fenstergröße
+        root.resizable(width=True, height=True)                       # Größenänderung mit Maus möglich
 
         self.widgets_hauptfenster()                 # Aufrufen der Funktion aus Klasse
 
@@ -43,7 +43,7 @@ class App():
         self.start_ges = tk.Text(root, fg="#000000", state="disable")       # Erzeugen eines Textfeldes
         self.start_ges.place(x=320, y=40, width=180, height=70)             # Platzierung des Textfeldes auf Fenster
 
-        self. ende_ges = tk.Text(root, fg="#000000", state="disable")
+        self.ende_ges = tk.Text(root, fg="#000000", state="disable")
         self.ende_ges.place(x=320, y=120, width=180, height=70)
 
         text_startdatum1 = "Enter start date\nDD.MM.YYYY"               # Text, der in Textfeld später eingefügt wird
@@ -105,9 +105,6 @@ class App():
         self.opt.config(width=90, font=('Helvetica', 10))                           # Konfigurationsoptionen für Optionsmenü
         self.opt.place(x=10, y=10, width=150, height=25)
 
-        if(self.var.get() != "Choose component" and self.dt_startdatum !="" and self.dt_enddatum != ""):
-            self.get_data()         # Wenn if-Bdg zutrifft (Bauteil ausgewählt, Start- & Enddatum eingegeben, Funktion aufrufen, um Werte aus Datenbank abzufragen
-
     def b_statistic_command(self):
         auswahl = self.var.get()                # Inhalt von var abfragen
         if(auswahl == "Choose componenet"):     # Wenn kein Bauteil ausgewählt
@@ -128,20 +125,20 @@ class App():
             self.b_home.place(x=510, y=10, width=70, height=25)
 
             ### bar chart
-            x_bele = [0, 0, 0, 0, 0, 0]                         # Leere Liste für x-Werte (Zeit)
-            x_frei = [0, 0, 0, 0, 0, 0]                         # Leere Liste für x-Werte (Zeit)
-            x_zeit = [10, 20, 30, 40, 50, 60]                   # Liste mit Zeitpunkten  --> theoretisch aus Datenbank
-            y_speicher_belegt = [10, 45, 0, 90, 60, 5]          # Liste mit belegtem Speicher --> theoretisch aus Datenbank
-            y_speicher_frei = [90, 55, 100, 10, 40, 95]         # Liste mit freiem Speicher --> theoretisch aus Datenbank
-            for i in range(len(x_zeit)):                        # Berechnung der "neuen" x-Werte für die Zeit (damit Balken nebeneinander)
-                x_bele[i] = x_zeit[i] - 0.5
-                x_frei[i] = x_zeit[i] + 0.5
+            #x_bele = [0, 0, 0, 0, 0, 0]                         # Leere Liste für x-Werte (Zeit)
+            #x_frei = [0, 0, 0, 0, 0, 0]                         # Leere Liste für x-Werte (Zeit)
+            x_zeit = self.fs_time                  # Liste mit Zeitpunkten  --> theoretisch aus Datenbank
+            #y_speicher_belegt = [10, 45, 0, 90, 60, 5]          # Liste mit belegtem Speicher --> theoretisch aus Datenbank
+            y_speicher_frei = self.fs_storage         # Liste mit freiem Speicher --> theoretisch aus Datenbank
+            #for i in range(len(x_zeit)):                        # Berechnung der "neuen" x-Werte für die Zeit (damit Balken nebeneinander)
+            #    x_bele[i] = x_zeit[i] - 0.5
+            #    x_frei[i] = x_zeit[i] + 0.5
             figure = Figure(figsize=(6, 4), dpi=100)            # Figure erstellen, um Diagramm zu halten
             figure_canvas = FigureCanvasTkAgg(figure, master=newwin)    # Objekt, um Figure und Canvas zu verknüfen, Fenster festlegen
             NavigationToolbar2Tk(figure_canvas, newwin)                 # built-in Toolbar von mathplotlib
             ax = figure.add_subplot()                           # Subplot hinzufügen und Achsen festlegen
-            ax.bar(x_bele, y_speicher_belegt)                   # Datensatz 1 und Diagrammtyp
-            ax.bar(x_frei, y_speicher_frei)                     # Datensatz 2 und Diagrammtyp
+            #ax.bar(x_bele, y_speicher_belegt)                   # Datensatz 1 und Diagrammtyp
+            ax.bar(x_zeit, y_speicher_frei)                     # Datensatz 2 und Diagrammtyp
             ax.set_title("Freier und belegter Speicherplatz")   # Diagrammtitel
             ax.set_ylabel("Speicherplatz")                      # y-Achsen-Beschriftung
             ax.legend(["Belegt", "Frei"])                       # Inhalt für Legende
@@ -203,41 +200,56 @@ class App():
         else:
             msg.showwarning("Warning", "Selected end date are earlier than selected start date!\nPleas check your entry.")
 
-    def get_data(self):
-        """ Funktionene für Datenbankaufruf müssen gemockt werden"""
-        auswahl = self.var.get()                    # Inhalt von var (Bauteilauswahl) in Variablen speichern
-        def st_dict(start, ende):
-            return db.count_states(start, ende)     # Dictionary mit Anzahl Stati
-        def speicher(start, ende):
-            freier_speicher = db.storage_progress(start, ende)      # Speicherverlauf über Zeit (Liste)
-            return freier_speicher
-        def jobs():
-            return db.get_all_jobs()                # Anzahl aller Jobs
-        def temp(job):
-            return db.temp_progress(job)            # Temperaturverlauf von Düse & Bett (tupel)
+        ### Einträge aus Datenbank einfügen
+        self.stati_dict = datenabfrage.get_Data.get_states(self.dt_startdatum, self.dt_enddatum)
+        if(self.stati_dict["ready"] != 0):
+            self.ready = self.stati_dict["ready"]
+        else:
+            self.ready = 0
+        if(self.stati_dict["printing"] != 0):
+            self.printing = self.stati_dict["printing"]
+        else:
+            self.printing = 0
+        if(self.stati_dict["off"] != 0):
+            self.off = self.stati_dict["off"]
+        else:
+            self.off = 0
+        if(self.stati_dict["paused"] != 0):
+            self.paused = self.stati_dict["paused"]
+        else:
+            self.printing = 0
+        if(self.stati_dict["error"] != 0):
+            self.error = self.stati_dict["error"]
+        else:
+            self.error = 0
 
-        self.stati_dict = st_dict(self.dt_startdatum, self.dt_enddatum)
-        freier_speicher = speicher(self.dt_startdatum, self.dt_enddatum)
-        fs_zeit = freier_speicher[0]                # Liste aus Datenbank zerlegen
-        fs_speicher = freier_speicher[1]
-        job = jobs()
-        temp = temp(job)
-        self.temp_t = []                            # Leere Liste erstellen
+        storage = datenabfrage.get_Data.get_storage(self.dt_startdatum, self.dt_enddatum)
+        self.fs_time = storage[0]
+        self.fs_storage = storage[1]
+
+        temp = datenabfrage.get_Data.get_temp()
+        self.temp_t = []                        # Leere Liste erstellen
         self.temp_tool_i = []
         self.temp_tool_s = []
         self.temp_bed_i = []
         self.temp_bed_s = []
         for i in range(len(temp)):
-            self.temp_t[i] = temp(i)(0)             # Zerlegung des tupels in Listen
+            self.temp_t[i] = temp(i)(0)         # Zerlegung des tupels in Listen
             self.temp_tool_i[i] = temp(i)(1)
             self.temp_tool_s[i] = temp(i)(2)
             self.temp_bed_i[i] = temp(i)(3)
             self.temp_bed_s[i] = temp(i)(4)
 
     def b_show_command(self):
-        #self.l_Anzahl["text"] = "Number of printed parts:\n {}".format()   #Anzahl gedruckter Teile --> theoretisch aus Datenbank
+        num = datenabfrage.get_Data.get_number(self.dt_startdatum, self.dt_enddatum, self.var.get())
+        self.l_Anzahl["text"] = "Number of printed parts:\n {}".format(num)   #Anzahl gedruckter Teile --> theoretisch aus Datenbank
+        av_pt = datenabfrage.get_Data.get_average_pt()
+        self.l_Druckzeit["text"] = "Average print time:\n {}".format(av_pt)
+        av_pv = datenabfrage.get_Data.get_average_pv(self.dt_startdatum, self.dt_enddatum)
+        self.l_Druckvolumen["text"] = "Average print volume:\n {}".format(av_pv)
+
         stati = ['Bereit', 'Aus', 'Druckt', 'Pausiert', 'Störung']
-        anz = [5, 1, 3, 2, 1]
+        anz = [self.ready, self.off, self.printing, self.paused, self.error]
         colour = ('#cbe8ba', '#c0c0c0', '#ffd783', '#a8c6fa', '#ff8a84')
         figure = Figure(figsize=(5, 5), dpi=100)
         figure_canvas = FigureCanvasTkAgg(figure, master=root)
@@ -247,5 +259,8 @@ class App():
         axes.set_title("Number of states")
         figure_canvas.get_tk_widget().place(x=10, y=350, width=400, height=200)
 
-app = App(root)     # Aufruf der Klasse
+    def hide_win(self):
+        root.withdraw()
+
+app = App()     # Aufruf der Klasse
 root.mainloop()     # Mainloop-Methode auf Hauptfenster anwenden --> Fenster bleibt so lange geöffnet, bis man es schließt (X)
