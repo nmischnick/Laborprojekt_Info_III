@@ -2,7 +2,7 @@
 Diese Datei ruft die Daten des Druckers über die octoprint API ab.
 
 Autor: Nico Mischnick
-letzte Änderung: 14.12.22 11:58 Uhr
+letzte Änderung: 21.12.22
 """
 
 import json
@@ -20,10 +20,10 @@ class GetData:
         """
         Diese Funktion testet die Verbindung zum Server.
         """
-        response = requests.get(url, timeout=0.5)
-        if response.status_code == 200:
-            return str(response.json())
-        raise TimeoutError
+        response = requests.get(url, timeout=0.5)   # holt Infos von angegebener URL, liefert timeout nach 0.5 Sek
+        if response.status_code == 200:             # wenn Status 200, also in Ordnung ist, versuche json zurückzugeben
+            return str(response.json())             # gebe json der URL zurück
+        raise TimeoutError                          # wenn Status nicht gleich 200, dann gebe TimeoutError zurück
 
     @staticmethod
     def check_json_error(data):
@@ -32,12 +32,12 @@ class GetData:
         und ob der JSON-String einen Error enthält
         """
         try:
-            jdata = json.loads(str(data))
-            if "error" in jdata:
-                return True
+            jdata = json.loads(str(data))       # prüfe, ob zurückgegebene Datei wirklich json ist
+            if "error" in jdata:                # wenn ja, prüfe, ob json einen Error enthält
+                return True                     # wenn Error, gebe True zurück
         except ValueError:
-            return True
-        return False
+            return True                         # wenn kein json gebe True zurück
+        return False                            # wenn json ohne Error, gebe False zurück
 
 
 def get_json(url):
@@ -46,9 +46,9 @@ def get_json(url):
     Über diese Funktion bekommt das json_filter Programm zugriff auf die JSON-Strings von dem Server
     """
     try:
-        string = GetData.server_request(url)
+        string = GetData.server_request(url)        # Versuche Verbindung über URL zu bekommen
     except TimeoutError:
-        return "Error: Verbindungsfehler"
-    if GetData.check_json_error(string) is True:
+        return "Error: Verbindungsfehler"           # Wenn TimeoutError gebe dies zurück
+    if GetData.check_json_error(string) is False:   # Wenn Prüfung Error False, dann gebe string zurück
         return string
-    return "Error: JSON_String"
+    return "Error: JSON_String"                     # Wenn Prüfung Error True, dann gebe dies zurück
