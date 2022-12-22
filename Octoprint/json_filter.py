@@ -27,8 +27,8 @@ def printer_api_f():
 
             state = key
 
-        else:
-            state = "ready"
+    if state == "":
+        state = "ready"
 
     temperatur = json_info['temperature']       #daten definieren mit path
     temp_bed_i = temperatur['bed']['actual']
