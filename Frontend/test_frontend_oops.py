@@ -7,11 +7,11 @@ import datetime
 import unittest
 from unittest.mock import patch, MagicMock
 
-teil = 0
+teil = "Teil"
 job = 1
 startdatum = datetime.datetime(2020, 12, 25, 13, 45).strftime("%d.%m.%Y %H:%M")       # Jahr, Monat, Tag, Stunde, Minute
 enddatum = datetime.datetime(2021, 1, 10, 15, 12).strftime("%d.%m.%Y %H:%M")
-#print("Start: ",startdatum," --- Ende:",enddatum)
+
 
 mock = MagicMock()
 
@@ -34,15 +34,25 @@ class TestMain(unittest.TestCase):
 
     @patch('datenabfrage.get_Data.get_number')
     def test_get_number(self, mock):
-        mock.return_value = "return-value"
-        self.assertEqual(datenabfrage.get_Data.get_number(startdatum, enddatum, teil), "return-value")
+        mock.return_value = 10
+        self.assertEqual(datenabfrage.get_Data.get_number(startdatum, enddatum, teil), 10)
 
     @patch('datenabfrage.get_Data.get_average_pt')
     def test_get_average_pt(self, mock):
-        mock.return_value = "return-value"
-        self.assertEqual(datenabfrage.get_Data.get_average_pt(), "return-value")
+        mock.return_value = 5
+        self.assertEqual(datenabfrage.get_Data.get_average_pt(), 5)
 
     @patch('datenabfrage.get_Data.get_average_pv')
     def test_get_average_pv(self, mock):
-        mock.return_value = "return-value"
-        self.assertEqual(datenabfrage.get_Data.get_average_pv(startdatum, enddatum), "return-value")
+        mock.return_value = 25
+        self.assertEqual(datenabfrage.get_Data.get_average_pv(startdatum, enddatum), 25)
+
+    @patch('datenabfrage.get_Data.get_name')
+    def test_get_name(self, mock):
+        mock.return_value = ["teil1", "teil2", "teil3"]
+        self.assertEqual(datenabfrage.get_Data.get_name(), ["teil1", "teil2", "teil3"])
+
+    @patch('datenabfrage.get_Data.get_job')
+    def test_get_all_jobs(self, mock):
+        mock.return_value = ((24, "teil", "str"))     #((job_id, dateiname, downloadlink),(...))
+        self.assertEqual(datenabfrage.get_Data.get_job(), ((24, "teil", "str")))

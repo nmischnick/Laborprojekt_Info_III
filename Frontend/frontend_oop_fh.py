@@ -4,6 +4,7 @@
 """
 
 ### Imports
+import Datenbank.datenbank as db
 import datenabfrage
 import tkinter as tk
 import tkinter.messagebox as msg
@@ -14,14 +15,24 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 
 matplotlib.use('TkAgg')     # festlegen, welches Backend matplotlib nutzen soll
 
+##############################################
+db.create_database()
+##############################################
+
 root = tk.Tk()              # Fenster initialisieren
 
 
 class App():
     ### Variablen für alles
     var = ""
+    id = 24
     dt_startdatum = ""
     dt_enddatum = ""
+    temp_t = []             # Leere Liste erstellen
+    temp_tool_i = []
+    temp_tool_s = []
+    temp_bed_i = []
+    temp_bed_s = []
 
     def __init__(self):
         root.title("Projekt - Labor Ingenieurinformatik 3")           # Fenstertitel festlegen
@@ -98,12 +109,19 @@ class App():
         self.b_show.place(x=10, y=310, width=150, height=25)
 
         ### Bauteilauswahl
-        bauteil = ("Doppel-T-Träger", "T-Träger", "L-Träger","Vollwelle")           # Auswahlmöglichkeiten für Dropdown-Liste --> eigentlich aus Datenbank abfragen
+        bauteil = datenabfrage.get_Data.get_name()         # Auswahlmöglichkeiten für Dropdown-Liste --> eigentlich aus Datenbank abfragen
         self.var = tk.Variable(value=bauteil)                                       # Liste als Variablen für Dropdownliste festlegen
         self.var.set("Choose component")
         self.opt = tk.OptionMenu(root, self.var, *bauteil)                          # OptionsMenü erzeugen
         self.opt.config(width=90, font=('Helvetica', 10))                           # Konfigurationsoptionen für Optionsmenü
         self.opt.place(x=10, y=10, width=150, height=25)
+
+        job_id = datenabfrage.get_Data.get_job()
+        self.id = tk.Variable(value=job_id)  # Liste als Variablen für Dropdownliste festlegen
+        self.id.set("Choose job")
+        self.opt2 = tk.OptionMenu(root, self.id, *job_id)  # OptionsMenü erzeugen
+        self.opt2.config(width=90, font=('Helvetica', 10))  # Konfigurationsoptionen für Optionsmenü
+        self.opt2.place(x=170, y=10, width=150, height=25)
 
     def b_statistic_command(self):
         auswahl = self.var.get()                # Inhalt von var abfragen
@@ -114,54 +132,49 @@ class App():
             newwin.title("Statistics")
             newwin.geometry("600x600")
             newwin.minsize(width=400, height=400)
-            newwin.maxsize(width=1200, height=1200)
+            newwin.maxsize(width=1200, height=1400)
             newwin.resizable(width=True, height=True)
 
-            self.l_test = tk.Label(newwin, bg="#dddddd", fg="#000000", justify="center")            # Text des erzeugten Labes entspricht Bauteilauswahl aus Dropdownliste (Hauptfenster)
-            self.l_test.place(x=10, y=10, width=150, height=25)
-            self.l_test["text"] = auswahl
+            self.l_teil = tk.Label(newwin, bg="#dddddd", fg="#000000", justify="center")            # Text des erzeugten Labes entspricht Bauteilauswahl aus Dropdownliste (Hauptfenster)
+            self.l_teil.place(x=10, y=10, width=250, height=25)
+            self.l_teil["text"] = auswahl
 
             self.b_home = tk.Button(newwin, bg="#dddddd", fg="#000000", justify="center", text="Home", command=newwin.destroy)
             self.b_home.place(x=510, y=10, width=70, height=25)
 
             ### bar chart
-            #x_bele = [0, 0, 0, 0, 0, 0]                         # Leere Liste für x-Werte (Zeit)
-            #x_frei = [0, 0, 0, 0, 0, 0]                         # Leere Liste für x-Werte (Zeit)
             x_zeit = self.fs_time                  # Liste mit Zeitpunkten  --> theoretisch aus Datenbank
-            #y_speicher_belegt = [10, 45, 0, 90, 60, 5]          # Liste mit belegtem Speicher --> theoretisch aus Datenbank
             y_speicher_frei = self.fs_storage         # Liste mit freiem Speicher --> theoretisch aus Datenbank
-            #for i in range(len(x_zeit)):                        # Berechnung der "neuen" x-Werte für die Zeit (damit Balken nebeneinander)
-            #    x_bele[i] = x_zeit[i] - 0.5
-            #    x_frei[i] = x_zeit[i] + 0.5
-            figure = Figure(figsize=(6, 4), dpi=100)            # Figure erstellen, um Diagramm zu halten
+            figure = Figure(figsize=(5, 4), dpi=100)            # Figure erstellen, um Diagramm zu halten
             figure_canvas = FigureCanvasTkAgg(figure, master=newwin)    # Objekt, um Figure und Canvas zu verknüfen, Fenster festlegen
             NavigationToolbar2Tk(figure_canvas, newwin)                 # built-in Toolbar von mathplotlib
             ax = figure.add_subplot()                           # Subplot hinzufügen und Achsen festlegen
-            #ax.bar(x_bele, y_speicher_belegt)                   # Datensatz 1 und Diagrammtyp
             ax.bar(x_zeit, y_speicher_frei)                     # Datensatz 2 und Diagrammtyp
-            ax.set_title("Freier und belegter Speicherplatz")   # Diagrammtitel
+            ax.set_title("Freier Speicherplatz")                # Diagrammtitel
             ax.set_ylabel("Speicherplatz")                      # y-Achsen-Beschriftung
+            ax.set_xticklabels(ax.get_xticks(), rotation=45, ha='center')
             ax.legend(["Belegt", "Frei"])                       # Inhalt für Legende
-            figure_canvas.get_tk_widget().place(x=10, y=50, width=460, height=200)  # Diagramm auf Fenster platzieren
+            figure_canvas.get_tk_widget().place(x=10, y=50, width=460, height=350)  # Diagramm auf Fenster platzieren
 
             ## line chart
-            x_zeit = [0, 10, 20, 30, 40, 50]
-            y_temp_duese_ist = [25, 40, 60, 100, 100, 100]
-            y_temp_duese_soll = [100, 100, 100, 100, 100, 100]
-            y_temp_brett_ist = [25, 30, 40, 50, 60, 65]
-            y_temp_brett_soll = [70, 70, 70, 70, 70, 70]
-            figure = Figure(figsize=(6, 4), dpi=100)
+            x_zeit = self.temp_t   # [0, 10, 20, 30, 40, 50]
+            y_temp_duese_ist = self.temp_tool_i  # [25, 40, 60, 100, 100, 100]
+            y_temp_duese_soll = self.temp_tool_s  # [100, 100, 100, 100, 100, 100]
+            y_temp_bett_ist = self.temp_bed_i # [25, 30, 40, 50, 60, 65]
+            y_temp_bett_soll = self.temp_bed_s # [70, 70, 70, 70, 70, 70]
+            figure = Figure(figsize=(5,4), dpi=100)
             figure_canvas = FigureCanvasTkAgg(figure, master=newwin)
             NavigationToolbar2Tk(figure_canvas, newwin)
             axes = figure.add_subplot()
-            axes.plot(x_zeit, y_temp_duese_ist)
-            axes.plot(x_zeit, y_temp_duese_soll)
-            axes.plot(x_zeit, y_temp_brett_ist)
-            axes.plot(x_zeit, y_temp_brett_soll)
+            axes.scatter(x_zeit, y_temp_duese_ist)
+            axes.scatter(x_zeit, y_temp_duese_soll)
+            axes.scatter(x_zeit, y_temp_bett_ist)
+            axes.scatter(x_zeit, y_temp_bett_soll)
             axes.set_xlabel("Zeit [min]")                       # x-Achsen-Beschriftugn
             axes.set_ylabel("Temperatur [°C]")
+            axes.set_xticklabels(x_zeit, rotation=45, ha='center')
             axes.legend(["Düsentemp. ist", "Düsentemp. soll", "Betttemp. ist", "Betttemp. soll"], loc="lower right")
-            figure_canvas.get_tk_widget().place(x=10, y=300, width=460, height=200)
+            figure_canvas.get_tk_widget().place(x=10, y=410, width=460, height=300)
 
     def datum(self):
         start1 = str(self.e1_startdatum.get())              # Inhalt des Eingabefeldes abfragen und als string speichern
@@ -178,8 +191,7 @@ class App():
             stunde = int(t_a2[0])
             minute = int(t_a2[1])
             a_ges = datetime.datetime(jahr, monat, tag, stunde, minute)  # Zusammensetzen des Datums & abspeichern vom Typ datetime
-            dt_datum = a_ges.strftime("%d.%m.%Y %H:%M")                  # Formatierung des datetime-Wertes
-            return dt_datum
+            return a_ges
 
         try:                                                    # Versuch das Datum korrekt zu zerlegen
             self.dt_startdatum = datum_pruefen(start1, start2)  # Erstellung Startdatum in datetime-Format
@@ -202,52 +214,34 @@ class App():
 
         ### Einträge aus Datenbank einfügen
         self.stati_dict = datenabfrage.get_Data.get_states(self.dt_startdatum, self.dt_enddatum)
-        if(self.stati_dict["ready"] != 0):
-            self.ready = self.stati_dict["ready"]
-        else:
-            self.ready = 0
-        if(self.stati_dict["printing"] != 0):
-            self.printing = self.stati_dict["printing"]
-        else:
-            self.printing = 0
-        if(self.stati_dict["off"] != 0):
-            self.off = self.stati_dict["off"]
-        else:
-            self.off = 0
-        if(self.stati_dict["paused"] != 0):
-            self.paused = self.stati_dict["paused"]
-        else:
-            self.printing = 0
-        if(self.stati_dict["error"] != 0):
-            self.error = self.stati_dict["error"]
-        else:
-            self.error = 0
+        print(self.stati_dict)
+
+        self.ready = self.stati_dict["ready"]
+        self.printing = self.stati_dict["printing"]
+        self.off = self.stati_dict["off"]
+        self.paused = self.stati_dict["paused"]
+        self.error = self.stati_dict["error"]
 
         storage = datenabfrage.get_Data.get_storage(self.dt_startdatum, self.dt_enddatum)
         self.fs_time = storage[0]
         self.fs_storage = storage[1]
-
-        temp = datenabfrage.get_Data.get_temp()
-        self.temp_t = []                        # Leere Liste erstellen
-        self.temp_tool_i = []
-        self.temp_tool_s = []
-        self.temp_bed_i = []
-        self.temp_bed_s = []
-        for i in range(len(temp)):
-            self.temp_t[i] = temp(i)(0)         # Zerlegung des tupels in Listen
-            self.temp_tool_i[i] = temp(i)(1)
-            self.temp_tool_s[i] = temp(i)(2)
-            self.temp_bed_i[i] = temp(i)(3)
-            self.temp_bed_s[i] = temp(i)(4)
+        temp = datenabfrage.get_Data.get_temp(self.id.get())
+        for i in range(len(temp)):     #len(temp)-1):
+            self.temp_t.append(temp[i][0])      # Zerlegung des tupels in Listen
+            self.temp_tool_i.append(temp[i][1])
+            self.temp_tool_s.append(temp[i][2])
+            self.temp_bed_i.append(temp[i][3])
+            self.temp_bed_s.append(temp[i][4])
 
     def b_show_command(self):
+        """
         num = datenabfrage.get_Data.get_number(self.dt_startdatum, self.dt_enddatum, self.var.get())
         self.l_Anzahl["text"] = "Number of printed parts:\n {}".format(num)   #Anzahl gedruckter Teile --> theoretisch aus Datenbank
         av_pt = datenabfrage.get_Data.get_average_pt()
         self.l_Druckzeit["text"] = "Average print time:\n {}".format(av_pt)
         av_pv = datenabfrage.get_Data.get_average_pv(self.dt_startdatum, self.dt_enddatum)
         self.l_Druckvolumen["text"] = "Average print volume:\n {}".format(av_pv)
-
+        """
         stati = ['Bereit', 'Aus', 'Druckt', 'Pausiert', 'Störung']
         anz = [self.ready, self.off, self.printing, self.paused, self.error]
         colour = ('#cbe8ba', '#c0c0c0', '#ffd783', '#a8c6fa', '#ff8a84')
@@ -259,8 +253,6 @@ class App():
         axes.set_title("Number of states")
         figure_canvas.get_tk_widget().place(x=10, y=350, width=400, height=200)
 
-    def hide_win(self):
-        root.withdraw()
 
 app = App()     # Aufruf der Klasse
 root.mainloop()     # Mainloop-Methode auf Hauptfenster anwenden --> Fenster bleibt so lange geöffnet, bis man es schließt (X)
