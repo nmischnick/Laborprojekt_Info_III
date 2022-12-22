@@ -31,9 +31,9 @@ def create_database():
     # create files table
     sql = """
             CREATE TABLE IF NOT EXISTS `files` (
-                `file_id` varchar(30) NOT NULL,
-                `display` varchar(30) NOT NULL,
-                `download` varchar(30) NOT NULL,
+                `file_id` varchar(40) NOT NULL,
+                `display` varchar(256) NOT NULL,
+                `download` varchar(256) NOT NULL,
                 `date` int(10) NOT NULL,
                 PRIMARY KEY (`file_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -45,7 +45,7 @@ def create_database():
             CREATE TABLE IF NOT EXISTS `jobs` (
                 `job_id` int(10) NOT NULL AUTO_INCREMENT,
                 `time` datetime(6) NOT NULL,
-                `file` varchar(30) NOT NULL,
+                `file` varchar(40) NOT NULL,
                 `averagePrintTime` float NOT NULL,
                 `volume` float NOT NULL,
                 PRIMARY KEY (`job_id`),
@@ -95,8 +95,8 @@ def get_hash_from_display_date(jobs):
     display = str(jobs["display"])
     date = str(jobs["date"])
 
-    for i in range(6):
-        display = display[:-1]
+    #for i in range(6):
+    #    display = display[:-1]
 
     sql = "SELECT file_id FROM files WHERE date ='" + date + "' AND display = '" + display + "';"
 
@@ -153,7 +153,7 @@ def to_database_files(files):
     for file in files:
 
         file_id = str(file["hash"])
-        if file_id != None:
+        if file_id is not None:
             display = str(file["display"])
             download = str(file["download"])
             date = str(file["date"])
@@ -212,9 +212,11 @@ def to_database_all(files, jobs, printer):
     :return: None
     '''
 
+
     to_database_files(files)
     to_database_jobs(jobs)  # muss zuerst sonst bekommt stats keine job_id
     to_database_stats(printer, files)
+
 
 
 def load_gcode(dateiname):
@@ -290,7 +292,7 @@ def count_states(von, bis):
     for i in result:  # füge Ergebnisse in eine Liste
         states.append(i[0])
 
-    # states = ["error", "paused", "error", "error", "paused", "printing", "printing", "error", "error"] #test liste
+    print(states)
 
     for i in range(len(states) - 1):
         if states[i] != states[i + 1]:  # wenn unterschiedlich füge wert hinzu
