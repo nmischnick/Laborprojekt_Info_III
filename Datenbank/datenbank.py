@@ -430,9 +430,7 @@ def average_print_time(file):
 
     dic_averagePrintTime = {}
 
-    counter = 0
-    x = 1
-    y = 1
+    y = 0
 
     sql = "SELECT file, averagePrintTime FROM jobs;"
 
@@ -443,30 +441,29 @@ def average_print_time(file):
         list_file.append(i[0])
         list_averagePrintTime.append(i[1])
 
-    while x <= int(max(list_file)):
-        x += 1
     p = 0
 
+    dic_count = dict(Counter(list_file))
+    valuesList = list(dic_count.values())
+    keysList = list(dic_count.keys())
+
     while p <= len(list_file):
-        if y > int(max(list_file)):
+        if y == len(Counter(list_file).values()):
+
             return (dic_averagePrintTime[file])
             break
 
         elif p == len(list_file):
-            dic_averagePrintTime[list_file[y]] /= counter
+            dic_averagePrintTime[list_file[y]] /= valuesList[y]
             p = 0
             y += 1
-            counter = 0
 
-        elif list_file[p] == str(y):
+        elif list_file[p] == keysList[y]:
             if list_file[p] not in dic_averagePrintTime:
                 dic_averagePrintTime[list_file[p]] = list_averagePrintTime[p]
-                counter += 1
 
             elif list_file[p] in dic_averagePrintTime:
                 dic_averagePrintTime[list_file[p]] += list_averagePrintTime[p]
-                counter += 1
-
             p += 1
 
         else:

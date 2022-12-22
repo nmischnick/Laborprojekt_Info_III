@@ -15,4 +15,6 @@ def dostuff():
     to_database_all(files, jobs, printer)
 
 
-dostuff()
+#dostuff()
+
+print(temp_progress(24))
