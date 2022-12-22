@@ -281,7 +281,7 @@ def count_states(von, bis):
     """
 
     states = []  # Liste für alle werte
-    state_dict = {}  # {"error": 0, "ready": 0, "paused": 0, "printing": 0} #Ergebnis dict
+    state_dict = {"ready": 0, "printing": 0, "off": 0, "paused": 0, "error": 0}  # {"error": 0, "ready": 0, "paused": 0, "printing": 0} #Ergebnis dict
 
     sql = "SELECT state FROM stats WHERE time < '" + str(bis) + "' AND time > '" + str(
         von) + "';"  # alle states in Zeitraum von-bis
