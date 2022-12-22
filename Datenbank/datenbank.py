@@ -153,7 +153,7 @@ def to_database_files(files):
     for file in files:
 
         file_id = str(file["hash"])
-        if file_id is not None:
+        if file_id is not None and not "None": # es sind mehrere Teile vorhanden, weclhe "None" heißen, diese werden auch nicht eingefügt
             display = str(file["display"])
             download = str(file["download"])
             date = str(file["date"])
