@@ -384,10 +384,12 @@ def object_count_period(von, bis, file):
     for i in result:
         anzahl.append(i[0])
 
-    dict_count = dict(Counter(anzahl))
-    object_count = dict_count[file]
+    count = 0
+    for ele in anzahl:
+        if(ele == file):
+            count += 1
 
-    return (object_count)
+    return count
 
 
 def average_volume_period(von, bis):
@@ -426,46 +428,12 @@ def average_print_time(file):
          :rtype: int
      '''
 
-    list_file = []
-    list_averagePrintTime = []
-
-    dic_averagePrintTime = {}
-
-    y = 0
 
     sql = "SELECT file, averagePrintTime FROM jobs;"
 
     cursor.execute(sql)
-    result = cursor.fetchall()
+    result = cursor.fetchall()     # (('1', 234.0), ('test', 234.0), ('test2', 123.0), ('2', 34.0))
+    dict_result = dict(result)
 
-    for i in result:
-        list_file.append(i[0])
-        list_averagePrintTime.append(i[1])
-
-    p = 0
-
-    dic_count = dict(Counter(list_file))
-    valuesList = list(dic_count.values())
-    keysList = list(dic_count.keys())
-
-    while p <= len(list_file):
-        if y == len(Counter(list_file).values()):
-
-            return (dic_averagePrintTime[file])
-            break
-
-        elif p == len(list_file):
-            dic_averagePrintTime[list_file[y]] /= valuesList[y]
-            p = 0
-            y += 1
-
-        elif list_file[p] == keysList[y]:
-            if list_file[p] not in dic_averagePrintTime:
-                dic_averagePrintTime[list_file[p]] = list_averagePrintTime[p]
-
-            elif list_file[p] in dic_averagePrintTime:
-                dic_averagePrintTime[list_file[p]] += list_averagePrintTime[p]
-            p += 1
-
-        else:
-            p += 1
+    test = dict_result[file]
+    return test

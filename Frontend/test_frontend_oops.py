@@ -64,3 +64,8 @@ class TestMain(unittest.TestCase):
     def test_get_file(self, mock):
         mock.return_value = "str"
         self.assertEqual(datenabfrage.get_Data.get_file(), "str")
+
+    @patch('datenabfrage.get_Data.get_filename')
+    def test_get_filename(self, mock):
+        mock.return_value = 12.03
+        self.assertEqual(datenabfrage.get_Data.get_filename(teil), 12.03)

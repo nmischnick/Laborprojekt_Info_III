@@ -189,7 +189,7 @@ class App():
 
         start1 = str(self.e1_startdatum.get())              # Inhalt des Eingabefeldes abfragen und als string speichern
         start2 = str(self.e2_startdatum.get())
-        ende1 = str(self.e1_startdatum.get())
+        ende1 = str(self.e1_enddatum.get())
         ende2 = str(self.e2_enddatum.get())
 
         def datum_pruefen(a1, a2):
@@ -208,7 +208,7 @@ class App():
             self.dt_enddatum = datum_pruefen(ende1, ende2)      # Erstellung Enddatum in datetime-Format
         except ValueError:                                      # wenn Zerlegung nicht korrekt möglich
             msg.showwarning("Warning", "ValueError\nPlease check your entry!\n")  # Warnmeldung, wenn keine korrekte Zerlegung möglich
-        if (self.dt_startdatum < self.dt_enddatum):
+        if (self.dt_startdatum <= self.dt_enddatum):
             self.start_ges.configure(state="normal")                # Textfeld nicht mehr schreibgeschützt
             self.ende_ges.configure(state="normal")
             self.start_ges.delete("1.0", "end")                     # Inhalt des gesamten Textfeldes löschen
@@ -236,7 +236,7 @@ class App():
         self.fs_time = storage[0]
         self.fs_storage = storage[1]
         temp = datenabfrage.get_Data.get_temp(self.id.get())
-        for i in range(len(temp)):     #len(temp)-1):
+        for i in range(len(temp)):
             self.temp_t.append(temp[i][0])      # Zerlegung des tupels in Listen
             self.temp_tool_i.append(temp[i][1])
             self.temp_tool_s.append(temp[i][2])
@@ -245,15 +245,17 @@ class App():
 
     def b_show_command(self):
         """ Erstellung und Platzierung (Anzeigen) des Tortendiagramms und Label unter de^n Angaben """
-        """
+
         file_id = datenabfrage.get_Data.get_file()
+        print("##################", file_id)
+        file = datenabfrage.get_Data.get_filename(self.var.get())
         num = datenabfrage.get_Data.get_number(self.dt_startdatum, self.dt_enddatum, file_id)
         self.l_Anzahl["text"] = "Number of printed parts:\n {}".format(num)   #Anzahl gedruckter Teile --> theoretisch aus Datenbank
-        av_pt = datenabfrage.get_Data.get_average_pt()
+        av_pt = datenabfrage.get_Data.get_average_pt(file)
         self.l_Druckzeit["text"] = "Average print time:\n {}".format(av_pt)
         av_pv = datenabfrage.get_Data.get_average_pv(self.dt_startdatum, self.dt_enddatum)
         self.l_Druckvolumen["text"] = "Average print volume:\n {}".format(av_pv)
-        """
+
         stati = ['Bereit', 'Aus', 'Druckt', 'Pausiert', 'Störung']
         anz = [self.ready, self.off, self.printing, self.paused, self.error]
         colour = ('#cbe8ba', '#c0c0c0', '#ffd783', '#a8c6fa', '#ff8a84')

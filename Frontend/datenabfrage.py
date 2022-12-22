@@ -29,8 +29,10 @@ class get_Data():
         return db.object_count_period(start, ende, teil)
 
     @staticmethod
-    def get_average_pt():
-        return db.average_print_time()
+    def get_average_pt(file):
+        test = db.average_print_time(file)
+        print(test)
+        return test
 
     @staticmethod
     def get_average_pv(start, ende):
@@ -78,28 +80,18 @@ class get_Data():
             file_id.append(liste3[i][0])
         return file_id
 
-"""
-def get_states(self):
-    return db.count_states(self.dt_startdatum, self.dt_enddatum)
+    @staticmethod
+    def get_filename(teil):
+        tupel = db.get_all_files()      # ((job_id, dateiname, downloadlink),(...))
+        liste = list(tupel)
+        liste1 = []
+        dict = {}
+        print(liste)
+        for i in range(len(liste)):
+            liste1.append(list(liste[i]))
+        print(liste1)
+        for i in range(len(liste1)):
+            dict[liste1[i][1]] = liste1[i][0]
 
-def get_data(self):
-    ### Funktionene für Datenbankaufruf müssen gemockt werden ###
-    auswahl = self.var.get()  # Inhalt von var (Bauteilauswahl) in Variablen speichern
-    self.stati_dict = db.count_states(self.dt_startdatum, self.dt_enddatum)
-    freier_speicher = db.storage_progress(self.dt_startdatum, self.dt_enddatum)
-    fs_zeit = freier_speicher[0]  # Liste aus Datenbank zerlegen
-    fs_speicher = freier_speicher[1]
-    job = db.get_all_jobs()
-    temp = db.temp_progress(job)
-    self.temp_t = []  # Leere Liste erstellen
-    self.temp_tool_i = []
-    self.temp_tool_s = []
-    self.temp_bed_i = []
-    self.temp_bed_s = []
-    for i in range(len(temp)):
-        self.temp_t[i] = temp(i)(0)  # Zerlegung des tupels in Listen
-        self.temp_tool_i[i] = temp(i)(1)
-        self.temp_tool_s[i] = temp(i)(2)
-        self.temp_bed_i[i] = temp(i)(3)
-        self.temp_bed_s[i] = temp(i)(4)
-"""
+        return dict[teil]
+
