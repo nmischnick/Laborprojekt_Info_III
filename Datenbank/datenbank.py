@@ -353,6 +353,8 @@ def temp_progress(job_id):
 
     sql = "SELECT time, temp_tool_i, temp_tool_s, temp_bed_i, temp_bed_s FROM stats WHERE job ='" + str(job_id) + "';"
 
+    print(sql)
+
     cursor.execute(sql)
     result = cursor.fetchall()
 
