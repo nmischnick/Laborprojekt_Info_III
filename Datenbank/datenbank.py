@@ -345,7 +345,7 @@ def average_print_time(file):
          :author: Marcel Lindwedel
          :param file: Objekt das abgefragt wird
          :return: Durchschnittliche Druckzeit eines Objekts
-         :rtype: int
+         :rtype: str
      '''
 
     list_file = []
