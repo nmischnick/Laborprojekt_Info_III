@@ -64,6 +64,20 @@ class get_Data():
             job_id.append(liste3[i][0])
         return job_id
 
+    @staticmethod
+    def get_file():
+        tupel = db.get_all_files()
+        liste2 = list(tupel)
+        liste3 = []
+        print(liste2)
+        for i in range(len(liste2)):
+            liste3.append(list(liste2[i]))
+        print(liste3)
+        file_id = []
+        for i in range(len(liste3)):
+            file_id.append(liste3[i][0])
+        return file_id
+
 """
 def get_states(self):
     return db.count_states(self.dt_startdatum, self.dt_enddatum)

@@ -234,14 +234,14 @@ class App():
             self.temp_bed_s.append(temp[i][4])
 
     def b_show_command(self):
-        """
-        num = datenabfrage.get_Data.get_number(self.dt_startdatum, self.dt_enddatum, self.var.get())
+        file_id = datenabfrage.get_Data.get_file()
+        num = datenabfrage.get_Data.get_number(self.dt_startdatum, self.dt_enddatum, file_id)
         self.l_Anzahl["text"] = "Number of printed parts:\n {}".format(num)   #Anzahl gedruckter Teile --> theoretisch aus Datenbank
         av_pt = datenabfrage.get_Data.get_average_pt()
         self.l_Druckzeit["text"] = "Average print time:\n {}".format(av_pt)
         av_pv = datenabfrage.get_Data.get_average_pv(self.dt_startdatum, self.dt_enddatum)
         self.l_Druckvolumen["text"] = "Average print volume:\n {}".format(av_pv)
-        """
+
         stati = ['Bereit', 'Aus', 'Druckt', 'Pausiert', 'Störung']
         anz = [self.ready, self.off, self.printing, self.paused, self.error]
         colour = ('#cbe8ba', '#c0c0c0', '#ffd783', '#a8c6fa', '#ff8a84')

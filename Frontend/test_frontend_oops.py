@@ -56,3 +56,8 @@ class TestMain(unittest.TestCase):
     def test_get_all_jobs(self, mock):
         mock.return_value = ((24, "teil", "str"))     #((job_id, dateiname, downloadlink),(...))
         self.assertEqual(datenabfrage.get_Data.get_job(), ((24, "teil", "str")))
+
+    @patch('datenabfrage.get_Data.get_file')
+    def test_get_file(self, mock):
+        mock.return_value = "str"
+        self.assertEqual(datenabfrage.get_Data.get_file(), "str")
