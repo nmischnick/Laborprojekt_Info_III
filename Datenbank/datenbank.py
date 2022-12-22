@@ -373,7 +373,6 @@ def average_print_time(file):
     while p <= len(list_file):
         if y == len(Counter(list_file).values()):
             
-            print(dic_averagePrintTime[file],)
             return (dic_averagePrintTime[file])
             break
 
