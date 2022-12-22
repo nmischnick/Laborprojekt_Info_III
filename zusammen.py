@@ -1,5 +1,5 @@
 from Datenbank.datenbank import create_database, to_database_all
-from Datenbank.datenbank import storage_progress, count_states, temp_progress
+from Datenbank.datenbank import storage_progress, count_states, temp_progress, get_all_files
 from Octoprint.json_filter import files_api_f, printer_api_f, job_api_f
 import threading
 import datetime
@@ -15,4 +15,6 @@ def dostuff():
     to_database_all(files, jobs, printer)
 
 
-dostuff()
+#dostuff()
+
+print(get_all_files())
