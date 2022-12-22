@@ -291,7 +291,9 @@ def object_count_period(von, bis, file):
         :author: Marcel Lindwedel
         :param von: Zeitpunkt, ab dem der Verlauf beginnen soll
         :param bis: Zeitpunkt, an dem der Verlauf enden soll
-        :param file: bestimmte Objektart
+        :param file: Objekt das abgefragt wird
+        :return: Häufigkeit der Druckausführung
+        :rtype: int
     '''
 
     #file = "1"
@@ -306,8 +308,9 @@ def object_count_period(von, bis, file):
     for i in result:
         anzahl.append(i[0])
 
-    anzahl_all = (Counter(anzahl))
-    print("Es wurden von Objekt", file, "insgesamt", anzahl_all[file], "Stücke gefertigt")
+    object_count = Counter(anzahl)[file]
+
+    return(object_count)
 
 def average_volume_period(von, bis):
     '''
@@ -316,6 +319,8 @@ def average_volume_period(von, bis):
          :author: Marcel Lindwedel
          :param von: Zeitpunkt, ab dem der Verlauf beginnen soll
          :param bis: Zeitpunkt, an dem der Verlauf enden soll
+         :return: Druckvolumen im abgefragten Zeitraum
+         :rtype: int
      '''
 
     volume = []
@@ -328,29 +333,64 @@ def average_volume_period(von, bis):
     for i in result:
         volume.append(i[1])
 
-    print(sum(volume) / len(volume))
+    average_volume = (sum(volume) / len(volume))
 
-def average_print_time():
+    return (average_volume)
+
+
+def average_print_time(file):
     '''
          Ermittelt, wie die durchschnittliche Durckzeit eines Objektes ist
-
+         
          :author: Marcel Lindwedel
+         :param file: Objekt das abgefragt wird
+         :return: Durchschnittliche Druckzeit eines Objekts
+         :rtype: int
      '''
 
-    job_id = []
-    averagePrintTime = []
+    list_file = []
+    list_averagePrintTime = []
+
+    dic_averagePrintTime = {}
 
     counter = 0
+    x = 1
+    y = 1
 
-    sql = "SELECT job_id, averagePrintTime FROM jobs;"
+    sql = "SELECT file, averagePrintTime FROM jobs;"
 
     cursor.execute(sql)
     result = cursor.fetchall()
 
     for i in result:
-        job_id.append(i[0])
-        averagePrintTime.append(i[1])
+        list_file.append(i[0])
+        list_averagePrintTime.append(i[1])
 
-    while counter < len(result):
-        print("Job:", job_id[counter], "Hat eine durchschnittliche Druckdauer von:", averagePrintTime[counter])
-        counter += 1
+    while x <= int(max(list_file)):
+        x += 1
+    p = 0
+
+    while p <= len(list_file):
+        if y > int(max(list_file)):
+            return (dic_averagePrintTime[file])
+            break
+
+        elif p == len(list_file):
+            dic_averagePrintTime[list_file[y]] /= counter
+            p = 0
+            y += 1
+            counter = 0
+
+        elif list_file[p] == str(y):
+            if list_file[p] not in dic_averagePrintTime:
+                dic_averagePrintTime[list_file[p]] = list_averagePrintTime[p]
+                counter += 1
+
+            elif list_file[p] in dic_averagePrintTime:
+                dic_averagePrintTime[list_file[p]] += list_averagePrintTime[p]
+                counter += 1
+
+            p += 1
+
+        else:
+            p += 1
