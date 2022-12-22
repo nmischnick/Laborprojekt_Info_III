@@ -323,6 +323,21 @@ def get_all_jobs():
 
     return result
 
+def get_all_files():
+    """
+    Gibt alle Druckaufträge wieder
+
+    :author: Luis Klimpke
+    :return: tuple, gefüllt mit tuplen Bsp.: ((job_id, dateiname, downloadlink),(...))
+    :rtype: tuple
+    """
+
+    sql = "SELECT file_id, display, download FROM files;"
+
+    cursor.execute(sql)
+    result = cursor.fetchall()
+
+    return result
 
 def temp_progress(job_id):
     """
