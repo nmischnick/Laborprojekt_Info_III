@@ -15,11 +15,4 @@ def dostuff():
     to_database_all(files, jobs, printer)
 
 
-#dostuff()
-
-#print(get_all_files())
-
-von = datetime.date(2022, 12, 1)
-bis = datetime.date(2023, 12, 1)
-
-print(count_states(von, bis))
+dostuff()
