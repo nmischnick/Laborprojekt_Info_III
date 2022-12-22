@@ -330,7 +330,7 @@ def get_all_files():
     Gibt alle Druckaufträge wieder
 
     :author: Luis Klimpke
-    :return: tuple, gefüllt mit tuplen Bsp.: ((job_id, dateiname, downloadlink),(...))
+    :return: tuple, gefüllt mit tuplen Bsp.: ((file_id, dateiname, downloadlink),(...))
     :rtype: tuple
     """
 
@@ -384,7 +384,8 @@ def object_count_period(von, bis, file):
     for i in result:
         anzahl.append(i[0])
 
-    object_count = Counter(anzahl)[file]
+    dict_count = dict(Counter(anzahl))
+    object_count = dict_count[file]
 
     return (object_count)
 

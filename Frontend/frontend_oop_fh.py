@@ -1,17 +1,20 @@
 """
     Test für Klassen mit tkinter
-    Autor: J.Bode          Matr.-Nr. 70476607
+    Autor: Jana Bode          Matr.-Nr. 70476607
+           Sirine Gloulou     Matr.-Nr. 70457104
+    Letzte Änderung: 22.12.2022
 """
 
 ### Imports
-import Datenbank.datenbank as db
 import datenabfrage
+import Datenbank.datenbank as db
 import tkinter as tk
 import tkinter.messagebox as msg
 import datetime
 import matplotlib
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+
 
 matplotlib.use('TkAgg')     # festlegen, welches Backend matplotlib nutzen soll
 
@@ -105,7 +108,7 @@ class App():
         self.l_Druckvolumen = tk.Label(root, bg="#dddddd", fg="#000000", justify="center", text="Average print volume:\n")
         self.l_Druckvolumen.place(x=330, y=250, width=150, height=50)
 
-        self.b_show = tk.Button(root, bg="#dddddd", fg="#000000", justify="center", text="Show",command=self.b_show_command)
+        self.b_show = tk.Button(root, bg="#dddddd", fg="#000000", justify="center", text="Show", command=self.b_show_command)
         self.b_show.place(x=10, y=310, width=150, height=25)
 
         ### Bauteilauswahl
@@ -117,13 +120,15 @@ class App():
         self.opt.place(x=10, y=10, width=150, height=25)
 
         job_id = datenabfrage.get_Data.get_job()
-        self.id = tk.Variable(value=job_id)  # Liste als Variablen für Dropdownliste festlegen
+        self.id = tk.Variable(value=job_id)                 # Liste als Variablen für Dropdownliste festlegen
         self.id.set("Choose job")
-        self.opt2 = tk.OptionMenu(root, self.id, *job_id)  # OptionsMenü erzeugen
+        self.opt2 = tk.OptionMenu(root, self.id, *job_id)   # OptionsMenü erzeugen
         self.opt2.config(width=90, font=('Helvetica', 10))  # Konfigurationsoptionen für Optionsmenü
         self.opt2.place(x=170, y=10, width=150, height=25)
 
     def b_statistic_command(self):
+        """ Erzeugt ein zweites Fenster (Toplevel) und deren Widgets & Diagramme """
+
         auswahl = self.var.get()                # Inhalt von var abfragen
         if(auswahl == "Choose componenet"):     # Wenn kein Bauteil ausgewählt
             msg.showwarning("Warning","\nPlease choose a component!\n")     # Warnmeldung
@@ -157,11 +162,11 @@ class App():
             figure_canvas.get_tk_widget().place(x=10, y=50, width=460, height=350)  # Diagramm auf Fenster platzieren
 
             ## line chart
-            x_zeit = self.temp_t   # [0, 10, 20, 30, 40, 50]
-            y_temp_duese_ist = self.temp_tool_i  # [25, 40, 60, 100, 100, 100]
-            y_temp_duese_soll = self.temp_tool_s  # [100, 100, 100, 100, 100, 100]
-            y_temp_bett_ist = self.temp_bed_i # [25, 30, 40, 50, 60, 65]
-            y_temp_bett_soll = self.temp_bed_s # [70, 70, 70, 70, 70, 70]
+            x_zeit = self.temp_t
+            y_temp_duese_ist = self.temp_tool_i
+            y_temp_duese_soll = self.temp_tool_s
+            y_temp_bett_ist = self.temp_bed_i
+            y_temp_bett_soll = self.temp_bed_s
             figure = Figure(figsize=(5,4), dpi=100)
             figure_canvas = FigureCanvasTkAgg(figure, master=newwin)
             NavigationToolbar2Tk(figure_canvas, newwin)
@@ -177,6 +182,11 @@ class App():
             figure_canvas.get_tk_widget().place(x=10, y=410, width=460, height=300)
 
     def datum(self):
+        """
+        Abfrage der Daten aus datenabfrage.py (Zugriff auf Datenbank)
+        Überprüfung und Konvertierung der Datumseinagbe
+        """
+
         start1 = str(self.e1_startdatum.get())              # Inhalt des Eingabefeldes abfragen und als string speichern
         start2 = str(self.e2_startdatum.get())
         ende1 = str(self.e1_startdatum.get())
@@ -234,6 +244,8 @@ class App():
             self.temp_bed_s.append(temp[i][4])
 
     def b_show_command(self):
+        """ Erstellung und Platzierung (Anzeigen) des Tortendiagramms und Label unter de^n Angaben """
+        """
         file_id = datenabfrage.get_Data.get_file()
         num = datenabfrage.get_Data.get_number(self.dt_startdatum, self.dt_enddatum, file_id)
         self.l_Anzahl["text"] = "Number of printed parts:\n {}".format(num)   #Anzahl gedruckter Teile --> theoretisch aus Datenbank
@@ -241,7 +253,7 @@ class App():
         self.l_Druckzeit["text"] = "Average print time:\n {}".format(av_pt)
         av_pv = datenabfrage.get_Data.get_average_pv(self.dt_startdatum, self.dt_enddatum)
         self.l_Druckvolumen["text"] = "Average print volume:\n {}".format(av_pv)
-
+        """
         stati = ['Bereit', 'Aus', 'Druckt', 'Pausiert', 'Störung']
         anz = [self.ready, self.off, self.printing, self.paused, self.error]
         colour = ('#cbe8ba', '#c0c0c0', '#ffd783', '#a8c6fa', '#ff8a84')

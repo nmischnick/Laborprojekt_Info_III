@@ -1,11 +1,14 @@
 """
     Projekt - Labor IngInfo 3   Testcode
-    Autor: J. Bode         Matr.-Nr. 70476607
+    Autor: Jana Bode         Matr.-Nr. 70476607
+           Sirnie Gloulou    Matr.-Nr. 70457104
 """
 import datenabfrage
 import datetime
 import unittest
 from unittest.mock import patch, MagicMock
+
+
 
 teil = "Teil"
 job = 1
