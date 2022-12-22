@@ -15,6 +15,6 @@ def dostuff():
     to_database_all(files, jobs, printer)
 
 
-#dostuff()
+dostuff()
 
-print(get_all_files())
+#print(get_all_files())

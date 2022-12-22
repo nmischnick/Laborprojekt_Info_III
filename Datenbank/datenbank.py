@@ -31,9 +31,9 @@ def create_database():
     # create files table
     sql = """
             CREATE TABLE IF NOT EXISTS `files` (
-                `file_id` varchar(30) NOT NULL,
-                `display` varchar(30) NOT NULL,
-                `download` varchar(30) NOT NULL,
+                `file_id` varchar(40) NOT NULL,
+                `display` varchar(256) NOT NULL,
+                `download` varchar(256) NOT NULL,
                 `date` int(10) NOT NULL,
                 PRIMARY KEY (`file_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -45,7 +45,7 @@ def create_database():
             CREATE TABLE IF NOT EXISTS `jobs` (
                 `job_id` int(10) NOT NULL AUTO_INCREMENT,
                 `time` datetime(6) NOT NULL,
-                `file` varchar(30) NOT NULL,
+                `file` varchar(40) NOT NULL,
                 `averagePrintTime` float NOT NULL,
                 `volume` float NOT NULL,
                 PRIMARY KEY (`job_id`),
