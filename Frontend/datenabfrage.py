@@ -5,8 +5,12 @@
 
 import Datenbank.datenbank as db
 
-
+# UT: PEP8 beachten!
 class get_Data():
+    """
+    # UT: Klassen und Methoden sollten kommentiert werden
+    """
+
     @staticmethod
     def get_states(start, ende):
         return db.count_states(start, ende)
@@ -22,6 +26,11 @@ class get_Data():
         temp = []
         for i in range(len(liste4)):
             temp.append(list(liste4[i]))
+        # UT besser:
+        # for elem in liste4:
+            # temp.append(elem)
+        # UT: Wieso machen Sie das so kompliziert?
+        # return list(db.temp_progress(job_id)) würde es doch auch tun, oder?
         return temp
 
     @staticmethod
@@ -31,7 +40,7 @@ class get_Data():
     @staticmethod
     def get_average_pt(file):
         test = db.average_print_time(file)
-        print(test)
+        print(test) # UT: keine Debug-Ausgaben mehr in Produktivcode!
         return test
 
     @staticmethod
@@ -43,8 +52,8 @@ class get_Data():
         tupel = db.get_all_files()          # ((job_id, dateiname, downloadlink),(...))
         liste = list(tupel)
         liste1 = []
-        print(liste)
-        for i in range(len(liste)):
+        print(liste) # UT: s.o.
+        for i in range(len(liste)): # UT: s.o.
             liste1.append(list(liste[i]))
         print(liste1)
         name = []
@@ -53,6 +62,7 @@ class get_Data():
         return name
 
     @staticmethod
+    # UT: Sie wiederholen hier zum x-ten Mal das gleiche Muster! --> Funktionen nutzen!
     def get_job():
         tupel = db.get_all_jobs()
         liste2 = list(tupel)
@@ -94,4 +104,3 @@ class get_Data():
             dict[liste1[i][1]] = liste1[i][0]
 
         return dict[teil]
-

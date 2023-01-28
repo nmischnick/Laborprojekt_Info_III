@@ -1,3 +1,6 @@
+""" UT: was macht dieses Modul, was machen die Funktionen?
+        Wer hat es geschrieben, wann wurde es zuletzt geändert?
+"""
 from unittest.mock import MagicMock
 import random
 import string
@@ -6,6 +9,7 @@ import string
 def id_generator(size=6, chars=string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for _ in range(size))
 
+# UT: PEP8 beachten! sprechenden Variablennamen.
 def random_int(a=0, b=200):
     return random.randint(a, b)
 
@@ -63,7 +67,8 @@ def test_can_insert_data():
     printer = octoprint.get_printer_data()
     files = octoprint.get_files_data()
     jobs = octoprint.get_jobs_data()
-    #to_database_all(printer, files, jobs)
+    #to_database_all(printer, files, jobs) # UT: das wäre die eigentliche Prüfung.
 
-    assert True
+    assert True  # UT: hier fehlt die Prüfung! Es wird auch nicht mir den Rückgabewerten des Mocks
+                 #     gearbeitet.
 

@@ -61,9 +61,11 @@ def files_api_f():
     liste =[]
     for i in range(0,len(files)):
         file = files[i]                     #der n tree des Files wird ausgewählt
+        # UT: Sie machen hier immer wieder das gleiche --> in Funktion auslagern
+        #     diese Funktion ist viel zu lang zum Testen. TDD-Methode beachten
         try:
             date = file['date']
-        except:
+        except: # UT: besser konkreten Fehler abfangen.
             date = None
         try:
             display = file['display']           #daten werden definiert mit path

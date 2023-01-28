@@ -19,7 +19,9 @@ enddatum = datetime.datetime(2021, 1, 10, 15, 12).strftime("%d.%m.%Y %H:%M")
 mock = MagicMock()
 
 class TestMain(unittest.TestCase):
-
+    # UT: Es ist natürlich nicht sinnvoll, Ihre eigenen Funktionen, die Sie testen wollen zu mocken ;-).
+    #     Sie hätten in diesem Fall Datenbank.datenbank.count_states(start, ende) mocken sollen.
+    #     Besseres Beispiel siehe test_get_name
     @patch('datenabfrage.get_Data.get_states')
     def test_get_states(self, mock):
         mock.return_value = {"error": 0, "ready": 0, "paused": 0, "printing": 0}
@@ -49,7 +51,13 @@ class TestMain(unittest.TestCase):
     def test_get_average_pv(self, mock):
         mock.return_value = 25
         self.assertEqual(datenabfrage.get_Data.get_average_pv(startdatum, enddatum), 25)
-
+    # UT: hier wird richtig deutlich, dass der Test so nicht sinnvoll ist.
+    #     Sie implementieren in datenabfrage.get_Data.get_name viel Code und einige Operationen.
+    #     Sinn dieses tests ist es doch herauszufinden, ob diese Operationen das Richtge mit dem
+    #     Ergebnis der DB Abfrage machen. Sie testen hier gar nichts, sondern geben einen festen Wert zurück.
+    #     @patch('Datenbank.datenbank.get_all_files') wäre hier sinnvoll
+    #     dann: mock.return_value = eine typische Rückgabe von Datenbank.datenbank.get_all_files()
+    #     in dem Assert statement dann der verarbeitete return in Ihrem erwartetem Format.
     @patch('datenabfrage.get_Data.get_name')
     def test_get_name(self, mock):
         mock.return_value = ["teil1", "teil2", "teil3"]

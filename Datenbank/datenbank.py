@@ -1,11 +1,11 @@
 import pymysql  # für die Verbindung zur MySQL-Datenbank
-from datetime import datetime
+from datetime import datetime # UT: PEP8 --> Importreihenfolge beachten
 import requests
-from collections import Counter
+from collections import Counter # UT: überflüssiger import --> hat in Produktivcode nichts verloren!
 
 
 # Verbindung zur Datenbank herstellen
-
+# UT: hier müsste ich erstmal wissen, dass ich eine mysql DB benötige!
 try:
     connection = pymysql.connect(host='127.0.0.1',
                                  user='root',
@@ -13,7 +13,7 @@ try:
                                  )
     cursor = connection.cursor()
 except:
-    pass
+    pass # UT: ungünstig, was passiert, wenn ich keine connection öffnen kann?
 
 
 def create_database():
@@ -76,6 +76,12 @@ def create_database():
     cursor.execute(sql)
     connection.commit()
 
+    # UT: keine Rückgabe? Woran machen Sie fest, dass alles funktioniert hat?
+    # das ist so nicht testbar, viel zu viele Operationen in einer Funktion.
+    # der Entwurf ist so nicht so richtig sinnvoll.
+    # 1. cursor.execute(sql)
+    #    connection.commit() sollten in eigen Funktion ausgelagert werden
+    # 2. String-Konstanten würde ich auslagern z.b. in Modul constants.py
 
 # create_database()
 
@@ -157,7 +163,7 @@ def to_database_files(files):
             display = str(file["display"])
             download = str(file["download"])
             date = str(file["date"])
-
+            # UT: PEP8 beachten! Zeile zu lang
             sql = "INSERT IGNORE INTO `files` (`file_id`, `display`, `date`, `download`) VALUES ('" + file_id + "', '" + display + "', '" + date + "','" + download + "');"
 
             cursor.execute(sql)
@@ -175,6 +181,7 @@ def to_database_jobs(jobs):
     """
 
     hash = str(get_hash_from_display_date(jobs))
+    # UT: PEP8 beachten!
     averagePrintTime = str(jobs["averagePrintTime"])
     volume = str(jobs["volume"])
     dt = str(datetime.now())
@@ -236,6 +243,8 @@ def load_gcode(dateiname):
     r = requests.get(result[0], allow_redirects=True)
 
     open(dateiname, 'wb').write(r.content)
+
+    # UT: close fehlt!
 
 
 def storage_progress(von, bis):

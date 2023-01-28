@@ -1,5 +1,5 @@
 """
-Diese Datei enthält die Mocks für die Test um  die Json Strings in beötigte Werte zu Bearbeiten
+Diese Datei enthält die Mocks für die Test um  die Json Strings in benötigte Werte zu Bearbeiten
 Autor: Jure Baloh
 Datum: 14.12.2022 10:34
 """
@@ -38,6 +38,7 @@ def job_api_f(octoprint_rest):
     return average_print_time,volume,display
 
 def files_api_f(octoprint_rest):
+    # UT: PEP8 beachten! Auch Kommentare zählen zur Zeilenlänge.
     "Die Funktion bearveitet den Json_files_api_string. Da der String aus mehreren Bäumen besteht, werden die nacheinander bearbeitet."
     job_info = octoprint_rest.get_job_info()
     json_info = json.loads(job_info)

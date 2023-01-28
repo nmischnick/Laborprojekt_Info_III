@@ -19,7 +19,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolb
 matplotlib.use('TkAgg')     # festlegen, welches Backend matplotlib nutzen soll
 
 ##############################################
-db.create_database()
+db.create_database() # UT: Bei jedem Start der Applikation?
 ##############################################
 
 root = tk.Tk()              # Fenster initialisieren
@@ -181,6 +181,7 @@ class App():
             axes.legend(["Düsentemp. ist", "Düsentemp. soll", "Betttemp. ist", "Betttemp. soll"], loc="lower right")
             figure_canvas.get_tk_widget().place(x=10, y=410, width=460, height=300)
 
+    # UT: Diese Funktion ist viel zu groß und kann so nach der TDD-Methodik nicht entstanden sein.
     def datum(self):
         """
         Abfrage der Daten aus datenabfrage.py (Zugriff auf Datenbank)
@@ -192,6 +193,7 @@ class App():
         ende1 = str(self.e1_enddatum.get())
         ende2 = str(self.e2_enddatum.get())
 
+        # UT: Struktur! Keine Funktionen in Funktionen deinieren. Wo ist der Testfall für diese Funktion?
         def datum_pruefen(a1, a2):
             t_a1 = a1.split(".")  # Zerlegung des Strings, Trennzeichen .  --> Einzelne Stücke in Liste gespeichert
             t_a2 = a2.split(":")  # Zerlegung des Strings, Trennzeichen :  --> Einzelne Stücke in Liste gespeichert
@@ -250,6 +252,7 @@ class App():
         print("##################", file_id)
         file = datenabfrage.get_Data.get_filename(self.var.get())
         num = datenabfrage.get_Data.get_number(self.dt_startdatum, self.dt_enddatum, file_id)
+        # UT: PEP8 beachten! Auch Kommentare gehören zur Zeilenlänge. Es geht ja um Lesbarkeit.
         self.l_Anzahl["text"] = "Number of printed parts:\n {}".format(num)   #Anzahl gedruckter Teile --> theoretisch aus Datenbank
         av_pt = datenabfrage.get_Data.get_average_pt(file)
         self.l_Druckzeit["text"] = "Average print time:\n {}".format(av_pt)

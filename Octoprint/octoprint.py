@@ -42,7 +42,7 @@ class GetData:
             return True                         # wenn kein json gebe True zurück
         return False                            # wenn json ohne Error, gebe False zurück
 
-
+# UT: diese Funktion wurde nicht getestet --> TDD-Methode verletzt
 def get_json(url):
     """
     Diese Funktion dient zum Abfangen von Verbindungsfehlern und falschen Strings.

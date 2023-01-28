@@ -10,7 +10,8 @@ def dostuff():
     files = files_api_f()
     printer = printer_api_f()
     jobs = job_api_f()
-
+    # UT: der Thread sollte eigentlich nicht in der Callback-Funktion des Threads gestartet werden
+    # Besser in Zeile 19
     threading.Timer(10.0, dostuff).start()
     to_database_all(files, jobs, printer)
 

@@ -10,6 +10,10 @@ from json_filter_mock import printer_api_f
 from json_filter_mock import job_api_f
 from json_filter_mock import files_api_f
 
+# UT: hier wird in keiner Weise die Funktion printer_api_f() aus json_filter getestet
+#     Ich sehe nur MOCK-Objekte des octoprint-Moduls und Aufrufe von Funktionen aus json_filter_mocks.py
+#     So macht das natürlich nur ganz wenig Sinn. Ziel wäre es ja gewesen, die Funktionen aus json_filter.py zu testen.
+
 def test_can_call_printer_api():
     """Die Funktion testet, ob die printer_api Json-String aufgerugen werden kann"""
     octoprint_rest = MagicMock()
